@@ -12,3 +12,4 @@ case class Times(left: Expr, right: Expr) extends BinaryExpr(left, right)
 case class Div(left: Expr, right: Expr) extends BinaryExpr(left, right)
 case class Mod(left: Expr, right: Expr) extends BinaryExpr(left, right)
 case class Var(value: String) extends Expr
+case class Assignment(left: Expr, right: Expr ) extends Expr
