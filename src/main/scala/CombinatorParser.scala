@@ -30,4 +30,24 @@ object CombinatorParser extends JavaTokenParsers {
     | "(" ~ expr ~ ")" ^^ { case _ ~ e ~ _ => e }
     | ident ^^ {case s => Var(s)}
   )
+//statement   ::= expression ";" | assignment | conditional | loop | block
+  def statement: Parser[Expr] = //TODO might need to add this to the stuff in behaviors
+    expr ~ ";" ^^ {case e ~ _ => e}
+    | assignment
+    | conditional
+    | loop
+    | block
+//assignment  ::= ident "=" expression ";"
+  def assignment: Parser[Expr] = //TODO might need to add this to the stuff in behaviors
+   ident ~ "=" ~ expr ~ ";" ^^ {case i ~ _ ~ e ~ _=> Assignment(Var(i),e)}
+
+  //conditional ::= "if" "(" expression ")" block [ "else" block ]
+  // TODO def conditional: Parser[Expr] =
+
+
+  //loop   ::= "while" "(" expression ")" block
+  // TODO def loop: Parser[Expr] =
+
+  //block       ::= "{" statement* "}"
+  // TODO def block: Parser[Expr] =
 }
