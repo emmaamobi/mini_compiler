@@ -37,17 +37,25 @@ object CombinatorParser extends JavaTokenParsers {
   def assignment: Parser[Expr] = //TODO might need to add this to the stuff in behaviors
     ident ~ "=" ~ expr ~ ";" ^^ { case i ~ _ ~ e ~ _ => Assignment(Var(i), e) }
 
-  //conditional ::= "if" "(" expression ")" block [ "else" block ]
-  // def conditional: Parser[Expr] =
-  //   "if" !~ "(" ~ expr ~ ")" ~ block ^^ {case "if" ~ _ ~ e ~ _ ~ b => Loop(e,b)
-  //   }
-  // TODO def conditional: Parser[Expr] =
-
-  //loop   ::= "while" "(" expression ")" block
   def loop: Parser[Expr] =
     "while" !~ "(" ~ expr ~ ")" ~ block ^^ {
       case "while" ~ _ ~ e ~ _ ~ b => Loop(e, b)
     }
+  /*
+  TODO FIGURE OUT THE BLOCK FORMAT I THINK IT LOOKS SOMETHING LIKE THIS
+   */
+  def block: Parser[Expr] =
+    "" !~ "{" ~ expr ~ "}"  //a code block has an expr between two curly braces?
+
+  //conditional ::= "if" "(" expression ")" block [ "else" block ]
+  def conditional: Parser[Expr] =
+     "if" !~ "(" ~ expr ~ ")" ~ block ^^ {case "if" ~ _ ~ e ~ _ ~ b => Loop(e,b)
+  //   }
+
+
+
+  //loop   ::= "while" "(" expression ")" block
+
   //block       ::= "{" statement* "}"
   // TODO def block: Parser[Expr] =
 }
