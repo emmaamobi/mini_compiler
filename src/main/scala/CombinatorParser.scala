@@ -42,12 +42,16 @@ object CombinatorParser extends JavaTokenParsers {
    ident ~ "=" ~ expr ~ ";" ^^ {case i ~ _ ~ e ~ _=> Assignment(Var(i),e)}
 
   //conditional ::= "if" "(" expression ")" block [ "else" block ]
+  // def conditional: Parser[Expr] = 
+  //   "if" !~ "(" ~ expr ~ ")" ~ block ^^ {case "if" ~ _ ~ e ~ _ ~ b => Loop(e,b)
+  //   }
   // TODO def conditional: Parser[Expr] =
 
 
   //loop   ::= "while" "(" expression ")" block
-  // TODO def loop: Parser[Expr] =
-
+  def loop: Parser[Expr] =
+    "while" !~ "(" ~ expr ~ ")" ~ block ^^ {case "while" ~ _ ~ e ~ _ ~ b => Loop(e,b)
+    }
   //block       ::= "{" statement* "}"
   // TODO def block: Parser[Expr] =
 }
