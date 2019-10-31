@@ -45,14 +45,14 @@ object CombinatorParser extends JavaTokenParsers {
   TODO FIGURE OUT THE BLOCK FORMAT I THINK IT LOOKS SOMETHING LIKE THIS
    */
   def block: Parser[Expr] =
-    "" ~ "{" ~ statement ~ "}"  //a code block has an expr between two curly braces?
+     "{" ~ rep(statement) ~ "}" //a code block has an expr between two curly braces?
 
   //conditional ::= "if" "(" expression ")" block [ "else" block ]
   def conditional: Parser[Expr] =
-     "if" ~ "(" ~ expr ~ ")" ~ block ^^ {case "if" ~ _ ~ e ~ _ ~ b => Loop(e,b)
-  //   }
-
-
+    "if" ~ "(" ~ expr ~ ")" ~ left ~ opt("else" ~ right) ^^ { 
+      case "if" ~ _ ~ e ~ _ ~ l ~ None => Conditional(e,l,Block()) 
+      case "if" ~ _ ~ e ~ _ ~ l ~ Some("else" ~ r) => Conditional(e,l,r) 
+    }
 
   //loop   ::= "while" "(" expression ")" block
 

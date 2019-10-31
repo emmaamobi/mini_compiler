@@ -20,5 +20,5 @@ case class Times(left: Expr, right: Expr) extends BinaryExpr(left, right)
 case class Div(left: Expr, right: Expr) extends BinaryExpr(left, right)
 case class Mod(left: Expr, right: Expr) extends BinaryExpr(left, right)
 case class Loop(left: Expr, right: Expr) extends BinaryExpr(left, right)
-case class Conditional(left: Expr, right: Expr, right_2: Expr) extends TrinaryExpr(left, right, right_2)
+case class Conditional(condition: Expr, left: Expr, right: Expr) extends TrinaryExpr(condition, left, right)
 case class Assignment(left: Expr, right: Expr) extends Expr
