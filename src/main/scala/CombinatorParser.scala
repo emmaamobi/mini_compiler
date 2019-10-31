@@ -30,9 +30,11 @@ object CombinatorParser extends JavaTokenParsers {
     | "(" ~ expr ~ ")" ^^ { case _ ~ e ~ _ => e }
     | ident ^^ { case s => Var(s) }
   )
+
   //statement   ::= expression ";" | assignment | conditional | loop | block
   def statement: Parser[Expr] = //TODO might need to add this to the stuff in behaviors
     expr ~ ";" ^^ { case e ~ _ => e } | assignment | conditional | loop | block
+
   //assignment  ::= ident "=" expression ";"
   def assignment: Parser[Expr] = //TODO might need to add this to the stuff in behaviors
     ident ~ "=" ~ expr ~ ";" ^^ { case i ~ _ ~ e ~ _ => Assignment(Var(i), e) }
@@ -41,15 +43,18 @@ object CombinatorParser extends JavaTokenParsers {
     "while" ~ "(" ~ expr ~ ")" ~ block ^^ {
       case "while" ~ _ ~ e ~ _ ~ b => Loop(e, b)
     }
+
   /*
   TODO FIGURE OUT THE BLOCK FORMAT I THINK IT LOOKS SOMETHING LIKE THIS
    */
   def block: Parser[Expr] =
-     "{" ~ rep(statement) ~ "}" //a code block has an expr between two curly braces?
+     "{" ~ rep(statement) ~ "}" ^^ {
+       case _ ~ statements ~ _ => Block(statements:_*)
+     } //a code block has an expr between two curly braces?
 
   //conditional ::= "if" "(" expression ")" block [ "else" block ]
   def conditional: Parser[Expr] =
-    "if" ~ "(" ~ expr ~ ")" ~ left ~ opt("else" ~ right) ^^ { 
+    "if" ~ "(" ~ expr ~ ")" ~ block ~ opt("else" ~ block) ^^ { 
       case "if" ~ _ ~ e ~ _ ~ l ~ None => Conditional(e,l,Block()) 
       case "if" ~ _ ~ e ~ _ ~ l ~ Some("else" ~ r) => Conditional(e,l,r) 
     }

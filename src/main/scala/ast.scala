@@ -22,3 +22,4 @@ case class Mod(left: Expr, right: Expr) extends BinaryExpr(left, right)
 case class Loop(left: Expr, right: Expr) extends BinaryExpr(left, right)
 case class Conditional(condition: Expr, left: Expr, right: Expr) extends TrinaryExpr(condition, left, right)
 case class Assignment(left: Expr, right: Expr) extends Expr
+case class Block(statements:Expr*) extends Expr

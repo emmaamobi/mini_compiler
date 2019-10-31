@@ -34,7 +34,7 @@ object behaviors {
     case Mod(l, r)   => 1 + math.max(height(l), height(r))
     case Var(v)      => 1
   }
-
+// IMPORTANT ONE, HAVE TO COMPLETE 
   def toFormattedString(prefix: String)(e: Expr): String = e match {
     case Constant(c) => prefix + c.toString
     case UMinus(r)   => buildUnaryExprString(prefix, "UMinus", toFormattedString(prefix + INDENT)(r))
@@ -46,6 +46,7 @@ object behaviors {
     case Var(v)      => prefix + v.toString
   }
 
+  
   def toFormattedString(e: Expr): String = toFormattedString("")(e)
 
   def buildExprString(prefix: String, nodeString: String, leftString: String, rightString: String) = {
