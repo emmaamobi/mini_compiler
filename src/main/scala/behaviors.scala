@@ -32,7 +32,7 @@ object behaviors {
     case Times(l, r) => 1 + math.max(height(l), height(r))
     case Div(l, r)   => 1 + math.max(height(l), height(r))
     case Mod(l, r)   => 1 + math.max(height(l), height(r))
-    case Var(v) => 1
+    case Var(v)      => 1
   }
 
   def toFormattedString(prefix: String)(e: Expr): String = e match {
@@ -43,7 +43,7 @@ object behaviors {
     case Times(l, r) => buildExprString(prefix, "Times", toFormattedString(prefix + INDENT)(l), toFormattedString(prefix + INDENT)(r))
     case Div(l, r)   => buildExprString(prefix, "Div", toFormattedString(prefix + INDENT)(l), toFormattedString(prefix + INDENT)(r))
     case Mod(l, r)   => buildExprString(prefix, "Mod", toFormattedString(prefix + INDENT)(l), toFormattedString(prefix + INDENT)(r))
-    case Var(v) => prefix + v.toString
+    case Var(v)      => prefix + v.toString
   }
 
   def toFormattedString(e: Expr): String = toFormattedString("")(e)
