@@ -34,8 +34,8 @@ object behaviors {
     case Mod(l, r)   => 1 + math.max(height(l), height(r))
     case Var(v)      => 1
   }
-  // Need Pretty Printer later. Only in block we'll worry about indentation. Try not to do it anywhere else 
-// IMPORTANT ONE, HAVE TO COMPLETE 
+  // Need Pretty Printer later. Only in block we'll worry about indentation. Try not to do it anywhere else
+  // IMPORTANT ONE, HAVE TO COMPLETE
   def toFormattedString(prefix: String)(e: Expr): String = e match {
     case Constant(c) => prefix + c.toString
     case UMinus(r)   => buildUnaryExprString(prefix, "UMinus", toFormattedString(prefix + INDENT)(r))
@@ -47,7 +47,6 @@ object behaviors {
     case Var(v)      => prefix + v.toString
   }
 
-  
   def toFormattedString(e: Expr): String = toFormattedString("")(e)
 
   def buildExprString(prefix: String, nodeString: String, leftString: String, rightString: String) = {
