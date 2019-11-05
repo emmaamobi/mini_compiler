@@ -6,12 +6,34 @@ import ast._
 object CombinatorParser extends JavaTokenParsers {
 
   /** expr ::= term { { "+" | "-" } term }* */
+  // def expr: Parser[Expr] =
+  //   term ~! opt(("+" | "-") ~ term) ^^ {
+  //     case l ~ None          => l
+  //     case l ~ Some("+" ~ r) => Plus(l, r)
+  //     case l ~ Some("-" ~ r) => Minus(l, r)
+  //   }
+  // attempt with foldleft
   def expr: Parser[Expr] =
-    term ~! opt(("+" | "-") ~ term) ^^ {
-      case l ~ None          => l
-      case l ~ Some("+" ~ r) => Plus(l, r)
-      case l ~ Some("-" ~ r) => Minus(l, r)
+    term ~! rep(("+" | "-") ~ term) ^^ {
+      case l ~ r => r.foldLeft(l) {
+        case (a, "+" ~ t) => Plus(a, t)
+        case (a, "-" ~ t) => Minus(a, t)
+      }
+      // case l ~ r => r(0)._1 match {
+      //   case "+" => Plus(l, r.toSeq.foldleft(0)((a, b) => Plus(a._2, b._2)))
+      //   case "-" => Minus(l, r.toSeq.foldleft(0)((a, b) => Minus(a._2, b._2)))
+      // }
+      //
     }
+  // def expr: Parser[Expr] =
+  //   term ~! rep(("+" | "-") ~ term) ^^ {
+  //     case l ~ Nil => l
+  //     case l ~ r => r(0)._1 match {
+  //       case "+" => Plus(l, r.toSeq.foldleft(0)((a, b) => Plus(a._2, b._2)))
+  //       case "-" => Minus(l, r.toSeq.foldleft(0)((a, b) => Minus(a._2, b._2)))
+  //     }
+  //     //
+  //   }
 
   /** term ::= factor { { "*" | "/" | "%" } factor }* */
   def term: Parser[Expr] =
@@ -27,7 +49,8 @@ object CombinatorParser extends JavaTokenParsers {
     wholeNumber ^^ { case s => Constant(s.toInt) }
     | "+" ~> factor ^^ { case e => e }
     | "-" ~> factor ^^ { case e => UMinus(e) }
-    | "(" ~ expr ~ ")" ^^ { case _ ~ e ~ _ => e }
+    // | "(" ~ expr ~ ")" ^^ { case _ ~ e ~ _ => e }
+    | "(" ~> expr <~ ")"
     | ident ^^ { case s => Var(s) }
   )
 
