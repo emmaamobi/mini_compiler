@@ -25,23 +25,22 @@ object CombinatorParser extends JavaTokenParsers {
       // }
       //
     }
-  // def expr: Parser[Expr] =
-  //   term ~! rep(("+" | "-") ~ term) ^^ {
-  //     case l ~ Nil => l
-  //     case l ~ r => r(0)._1 match {
-  //       case "+" => Plus(l, r.toSeq.foldleft(0)((a, b) => Plus(a._2, b._2)))
-  //       case "-" => Minus(l, r.toSeq.foldleft(0)((a, b) => Minus(a._2, b._2)))
-  //     }
-  //     //
-  //   }
 
   /** term ::= factor { { "*" | "/" | "%" } factor }* */
+  // def term: Parser[Expr] =
+  //   factor ~! opt(("*" | "/" | "%") ~ factor) ^^ {
+  //     case l ~ None          => l
+  //     case l ~ Some("*" ~ r) => Times(l, r)
+  //     case l ~ Some("/" ~ r) => Div(l, r)
+  //     case l ~ Some("%" ~ r) => Mod(l, r)
+  //   }
   def term: Parser[Expr] =
-    factor ~! opt(("*" | "/" | "%") ~ factor) ^^ {
-      case l ~ None          => l
-      case l ~ Some("*" ~ r) => Times(l, r)
-      case l ~ Some("/" ~ r) => Div(l, r)
-      case l ~ Some("%" ~ r) => Mod(l, r)
+    factor ~! rep(("*" | "/" | "%") ~ factor) ^^ {
+      case l ~ r => r.foldLeft(l) {
+        case (a, "*" ~ t) => Times(a, t)
+        case (a, "/" ~ t) => Div(a, t)
+        case (a, "%" ~ t) => Mod(a, t)
+      }
     }
 
   /** factor ::= wholeNumber | "+" factor | "-" factor | "(" expr ")" */
