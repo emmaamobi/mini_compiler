@@ -35,6 +35,7 @@ local.sbt
 
 # VsCode files
 .metals/
+.bloop
 
 # SBT configuration files
 # remove if specific version of SBT is required
