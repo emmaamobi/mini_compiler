@@ -6,13 +6,6 @@ import ast._
 object CombinatorParser extends JavaTokenParsers {
 
   /** expr ::= term { { "+" | "-" } term }* */
-  // def expr: Parser[Expr] =
-  //   term ~! opt(("+" | "-") ~ term) ^^ {
-  //     case l ~ None          => l
-  //     case l ~ Some("+" ~ r) => Plus(l, r)
-  //     case l ~ Some("-" ~ r) => Minus(l, r)
-  //   }
-  // attempt with foldleft
   def topLevel: Parser[Expr] =
     rep(statement) ^^ { case a => Block(a: _*) }
   def expr: Parser[Expr] =
@@ -21,21 +14,9 @@ object CombinatorParser extends JavaTokenParsers {
         case (a, "+" ~ t) => Plus(a, t)
         case (a, "-" ~ t) => Minus(a, t)
       }
-      // case l ~ r => r(0)._1 match {
-      //   case "+" => Plus(l, r.toSeq.foldleft(0)((a, b) => Plus(a._2, b._2)))
-      //   case "-" => Minus(l, r.toSeq.foldleft(0)((a, b) => Minus(a._2, b._2)))
-      // }
-      //
     }
 
   /** term ::= factor { { "*" | "/" | "%" } factor }* */
-  // def term: Parser[Expr] =
-  //   factor ~! opt(("*" | "/" | "%") ~ factor) ^^ {
-  //     case l ~ None          => l
-  //     case l ~ Some("*" ~ r) => Times(l, r)
-  //     case l ~ Some("/" ~ r) => Div(l, r)
-  //     case l ~ Some("%" ~ r) => Mod(l, r)
-  //   }
   def term: Parser[Expr] =
     factor ~! rep(("*" | "/" | "%") ~ factor) ^^ {
       case l ~ r => r.foldLeft(l) {
@@ -68,9 +49,6 @@ object CombinatorParser extends JavaTokenParsers {
       case "while" ~ _ ~ e ~ _ ~ b => Loop(e, b)
     }
 
-  /*
-  TODO FIGURE OUT THE BLOCK FORMAT I THINK IT LOOKS SOMETHING LIKE THIS
-   */
   def block: Parser[Expr] =
     "{" ~ rep(statement) ~ "}" ^^ {
       case _ ~ statements ~ _ => Block(statements: _*)
