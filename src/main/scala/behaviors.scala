@@ -46,8 +46,11 @@ object behaviors {
     case Div(l, r)   => buildExprString(prefix, "Div", toFormattedString(prefix + INDENT)(l), toFormattedString(prefix + INDENT)(r))
     case Mod(l, r)   => buildExprString(prefix, "Mod", toFormattedString(prefix + INDENT)(l), toFormattedString(prefix + INDENT)(r))
     case Var(v)      => prefix + v.toString
+    // case Loop(l,r) => buildExprString(prefix)
+    // case Conditional(c,l,r) => 
+    // case Assignment(l,r) => 
+    // case Block(statements: Expr*) => prefix
   }
-
   def toFormattedString(e: Expr): String = toFormattedString("")(e)
 
   def buildExprString(prefix: String, nodeString: String, leftString: String, rightString: String) = {
@@ -62,6 +65,7 @@ object behaviors {
     result.append(")")
     result.toString
   }
+  def buildBlockString(prefix: String,  )
 
   def buildUnaryExprString(prefix: String, nodeString: String, exprString: String) = {
     val result = new StringBuilder(prefix)

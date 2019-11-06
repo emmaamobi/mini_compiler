@@ -1,8 +1,15 @@
 package edu.luc.cs.laufer.cs473.expressions
+import org.jline.reader.LineReaderBuilder
+import org.jline.terminal.TerminalBuilder
 
 object CombinatorCalculator extends App {
+  val terminal = TerminalBuilder.terminal
+  val reader = LineReaderBuilder.builder.terminal(terminal).build
+  val prompt = "Enter infix expression: "
 
+  // val store = behaviors.newstore
   def processExpr(input: String): Unit = {
+
     println("You entered: " + input)
     val result = CombinatorParser.parseAll(CombinatorParser.topLevel, input) // TODO later change expr to block
     if (result.isEmpty) {
@@ -12,6 +19,8 @@ object CombinatorCalculator extends App {
       val expr = result.get
       println("The parsed expression is: ")
       println(toFormattedString(expr))
+      // println("The pretty form is:")
+      // println(toPrettyFormat(expr))
       // println("It has size " + size(expr) + " and height " + height(expr))
       // println("It evaluates to " + evaluate(expr))
     }
@@ -20,10 +29,13 @@ object CombinatorCalculator extends App {
   if (args.length > 0) {
     processExpr(args mkString " ")
   } else {
-    print("Enter infix expression: ")
-    scala.io.Source.stdin.getLines foreach { line =>
-      processExpr(line)
-      print("Enter infix expression: ")
+    while (true) {
+      processExpr(reader.readLine(prompt))
     }
+
+    // scala.io.Source.stdin.getLines foreach { line =>
+    //   processExpr(line)
+    //   print("Enter infix expression: ")
+    // }
   }
 }
