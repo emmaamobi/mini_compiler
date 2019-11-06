@@ -13,6 +13,8 @@ object CombinatorParser extends JavaTokenParsers {
   //     case l ~ Some("-" ~ r) => Minus(l, r)
   //   }
   // attempt with foldleft
+  def topLevel: Parser[Expr] =
+    rep(statement) ^^ { case a => Block(a: _*) }
   def expr: Parser[Expr] =
     term ~! rep(("+" | "-") ~ term) ^^ {
       case l ~ r => r.foldLeft(l) {
