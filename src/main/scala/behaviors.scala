@@ -65,7 +65,6 @@ object behaviors {
     result.append(")")
     result.toString
   }
-  def buildBlockString(prefix: String,  )
 
   def buildUnaryExprString(prefix: String, nodeString: String, exprString: String) = {
     val result = new StringBuilder(prefix)
