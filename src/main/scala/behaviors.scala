@@ -90,6 +90,11 @@ object behaviors {
 
   }
 
+  def buildPrettyString(prefix: String, e: Expr): String = {
+    val result = new StringBuilder(prefix)
+
+  }
+
   def buildExprString(prefix: String, nodeString: String, leftString: String, rightString: String) = {
     val result = new StringBuilder(prefix)
     result.append(nodeString)
