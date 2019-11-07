@@ -50,6 +50,12 @@ object behaviors {
     // case Conditional(c,l,r) => 
     // case Assignment(l,r) => 
     // case Block(statements: Expr*) => prefix
+    case Loop(l, r)             => buildExprString(prefix, nodeString = "Loop", toFormattedString(prefix + INDENT)(l), toFormattedString(prefix + INDENT)(r))
+    case Assignment(l, r)       => buildExprString(prefix, nodeString = "Assignment", toFormattedString(prefix + INDENT)(l), toFormattedString(prefix + INDENT)(r))
+    case Block(e)               => prefix + e.toString //TODO might need to use buildUnaryExpreString
+    case Conditional(e, b1, b2) => buildTrinaryExprString(prefix, "Conditional", toFormattedString(prefix + INDENT)(e), toFormattedString(prefix + INDENT)(b1), toFormattedString(prefix + INDENT)(b2))
+    // TODO finish conditional and block
+  //prefix, "conditional" conditional block block
   }
   def toFormattedString(e: Expr): String = toFormattedString("")(e)
 
@@ -57,6 +63,22 @@ object behaviors {
     val result = new StringBuilder(prefix)
     result.append(nodeString)
     result.append("(")
+    result.append(EOL)
+    result.append(leftString)
+    result.append(", ")
+    result.append(EOL)
+    result.append(rightString)
+    result.append(")")
+    result.toString
+  }
+  def buildTrinaryExprString(prefix: String, nodeString: String, conditional: String, leftString: String, rightString: String) = {
+    //TODO finish this
+    val result = new StringBuilder(prefix)
+    result.append(nodeString)
+    result.append("(")
+    result.append(EOL)
+    result.append(conditional)
+    result.append(",")
     result.append(EOL)
     result.append(leftString)
     result.append(", ")
