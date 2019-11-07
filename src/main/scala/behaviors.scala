@@ -59,6 +59,11 @@ object behaviors {
   }
   def toFormattedString(e: Expr): String = toFormattedString("")(e)
 
+  def toPrettyFormat(e: Expr): String = {
+    case Constant(c) => c.toString
+    case UMinus(r) => buildUnaryExprString(r.toString,"--",toFormattedString(INDENT)(r))
+  }
+
   def buildExprString(prefix: String, nodeString: String, leftString: String, rightString: String) = {
     val result = new StringBuilder(prefix)
     result.append(nodeString)
