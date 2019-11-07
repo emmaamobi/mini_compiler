@@ -11,13 +11,14 @@ object CombinatorCalculator extends App {
   def processExpr(input: String): Unit = {
 
     println("You entered: " + input)
-    val result = CombinatorParser.parseAll(CombinatorParser.topLevel, input) // TODO later change expr to block
+    val result = CombinatorParser.parseAll(CombinatorParser.topLevel, input)
     if (result.isEmpty) {
       println("This expression could not be parsed")
     } else {
       import behaviors._
       val expr = result.get
       println("The parsed expression is: ")
+      println(expr)
       println(toFormattedString(expr))
       // println("The pretty form is:")
       // println(toPrettyFormat(expr))
