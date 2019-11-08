@@ -60,7 +60,7 @@ object behaviors {
   def toFormattedString(e: Expr): String = toFormattedString("")(e)
 
   def toPrettyFormat(e: Expr): String = e match {
-    case Constant(c) => c.toString
+    case Constant(c) => "hello"
     case UMinus(r) => buildUnaryExprString(r.toString,"--",toFormattedString(INDENT)(r))
     case Plus(l, r)  => buildExprString("", "Plus", toFormattedString( INDENT)(l), toFormattedString(INDENT)(r))
     case Minus(l, r) => buildExprString("", "Minus", toFormattedString(INDENT)(l), toFormattedString(INDENT)(r))
@@ -92,7 +92,7 @@ object behaviors {
 
   def buildPrettyString(prefix: String, e: Expr): String = {
     val result = new StringBuilder(prefix)
-
+    return ""
   }
 
   def buildExprString(prefix: String, nodeString: String, leftString: String, rightString: String) = {
