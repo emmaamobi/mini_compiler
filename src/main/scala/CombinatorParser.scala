@@ -7,7 +7,8 @@ object CombinatorParser extends JavaTokenParsers {
 
   /** expr ::= term { { "+" | "-" } term }* */
   def topLevel: Parser[Expr] =
-    rep(statement) ^^ { case a => Block(a: _*) }
+    rep1(statement) ^^ { case a => Block(a: _*) }
+
   def expr: Parser[Expr] =
     term ~! rep(("+" | "-") ~ term) ^^ {
       case l ~ r => r.foldLeft(l) {
@@ -37,11 +38,11 @@ object CombinatorParser extends JavaTokenParsers {
   )
 
   //statement   ::= expression ";" | assignment | conditional | loop | block
-  def statement: Parser[Expr] = //TODO might need to add this to the stuff in behaviors
+  def statement: Parser[Expr] =
     expr ~ ";" ^^ { case e ~ _ => e } | assignment | conditional | loop | block
 
   //assignment  ::= ident "=" expression ";"
-  def assignment: Parser[Expr] = //TODO might need to add this to the stuff in behaviors
+  def assignment: Parser[Expr] =
     ident ~ "=" ~ expr ~ ";" ^^ { case i ~ _ ~ e ~ _ => Assignment(Var(i), e) }
 
   def loop: Parser[Expr] =
@@ -64,5 +65,5 @@ object CombinatorParser extends JavaTokenParsers {
   //loop   ::= "while" "(" expression ")" block
 
   //block       ::= "{" statement* "}"
-  // TODO def block: Parser[Expr] =
+
 }
