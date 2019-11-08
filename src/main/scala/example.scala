@@ -17,6 +17,11 @@ object example extends App {
     """.stripMargin
   )
 
+  val res1 = CombinatorParser.parseAll(CombinatorParser.topLevel, "x = 2;")
+  val res2 = CombinatorParser.parseAll(CombinatorParser.topLevel, "if (1) { 1 + 2; }")
+
+  println(res1)
+  println(res2)
   println(res)
 
 }

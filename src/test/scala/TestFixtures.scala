@@ -39,4 +39,18 @@ object TestFixtures {
       ),
       Constant(5)
     );
+  val simple1string = "x = 2;"
+
+  val simple1 = Block(
+    Assignment(Var("x"), Constant(2))
+  );
+
+  val simple2string = "x = 3; y = 9;"
+
+  val simple2 = Block(
+    Assignment(Var("x"), Constant(3)),
+    Assignment(Var("y"), Constant(9))
+  );
+
+  val simple3string = "if (1) { 1 + 2; }"
 }
