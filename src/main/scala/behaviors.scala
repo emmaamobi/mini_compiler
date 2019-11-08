@@ -58,40 +58,45 @@ object behaviors {
   }
   def toFormattedString(e: Expr): String = toFormattedString("")(e)
 
-  def toPrettyFormat(e: Expr): String = e match {
-    case Constant(c) => "hello"
-    case UMinus(r) => buildUnaryExprString(r.toString,"--",toFormattedString(INDENT)(r))
-    case Plus(l, r)  => buildExprString("", "Plus", toFormattedString( INDENT)(l), toFormattedString(INDENT)(r))
-    case Minus(l, r) => buildExprString("", "Minus", toFormattedString(INDENT)(l), toFormattedString(INDENT)(r))
-    case Times(l, r) => buildExprString("", "Times", toFormattedString(INDENT)(l), toFormattedString(INDENT)(r))
-    case Div(l, r)   => buildExprString("", "Div", toFormattedString(INDENT)(l), toFormattedString(INDENT)(r))
-    case Mod(l, r)   => buildExprString("", "Mod", toFormattedString( INDENT)(l), toFormattedString(INDENT)(r))
-    case Var(v)      => v.toString
-    // case Loop(l,r) => buildExprString(prefix)
+  def toPrettyFormatABC(prefix: String, e: Expr): String = e match {
+
+    case Constant(c)      => "hello"
+    case UMinus(r)        => buildPrettyString("  ", "")
+    case Plus(l, r)       => buildPrettyString("", l )
+    case Minus(l, r)      => buildPrettyString("", "Minus", toFormattedString(INDENT)(l) + toFormattedString(INDENT)(r))
+    case Times(l, r)      => buildPrettyString("", "Times", toFormattedString(INDENT)(l), toFormattedString(INDENT)(r))
+    case Div(l, r)        => buildPrettyString("", "Div", toFormattedString(INDENT)(l), toFormattedString(INDENT)(r))
+    case Mod(l, r)        => buildPrettyString("", "Mod", toFormattedString(INDENT)(l), toFormattedString(INDENT)(r))
+    case Var(v)           => v.toString
+    // case Loop(l,r) => buildPrettyString(prefix)
     // case Conditional(c,l,r) =>
     // case Assignment(l,r) =>
     // case Block(statements: Expr*) => prefix
-    case Loop(l, r)             => buildExprString("",
-      nodeString = "Loop",
-      toFormattedString("" + INDENT)(l),
-      toFormattedString("" + INDENT)(r))
-    case Assignment(l, r)       => buildExprString(l.toString,
-      nodeString = " = ",
-      toFormattedString("" + INDENT)(l),
-      toFormattedString("" + INDENT)(r))
-    case Block(e)               => "" + e.toString //TODO might need to use buildUnaryExpreString
+    case Loop(l, r)       => buildPrettyString("", l + r)
+    //      nodeString = "Loop",
+    //      toFormattedString("" + INDENT)(l),
+    //      toFormattedString("" + INDENT)(r))
+    case Assignment(l, r) => buildPrettyString("", l)
+    //      nodeString = " = ",
+    //      toFormattedString("" + INDENT)(l),
+    //      toFormattedString("" + INDENT)(r))
+    case Block(e @ _*)    => buildPrettyString("  ", e) //TODO might need to use buildUnaryExpreString
     case Conditional(e, b1, b2) => buildTrinaryExprString(
       "",
       "Conditional",
       toFormattedString("" + INDENT)(e),
       toFormattedString("" + INDENT)(b1),
-      toFormattedString("" + INDENT)(b2))
+      toFormattedString("" + INDENT)(b2)
+    )
+    case _ => ???
 
   }
 
-  def buildPrettyString(prefix: String, e: Expr): String = {
+  def buildPrettyString(prefix: String, e: Seq[Expr]): String = {
     val result = new StringBuilder(prefix)
-    return ""
+    val strings = e.map(expr => toPrettyFormatABC(prefix)(expr))
+    strings.foreach(strings => result.append(strings))
+    result.toString
   }
 
   def buildExprString(prefix: String, nodeString: String, leftString: String, rightString: String) = {

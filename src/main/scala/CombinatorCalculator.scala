@@ -21,7 +21,7 @@ object CombinatorCalculator extends App {
       println(expr)
       println(toFormattedString(expr))
       println("The pretty form is:")
-      println(toPrettyFormat(expr))
+      println(toPrettyFormatABC(expr))
       // println("It has size " + size(expr) + " and height " + height(expr))
       // println("It evaluates to " + evaluate(expr))
     }
