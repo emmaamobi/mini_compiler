@@ -52,13 +52,10 @@ object behaviors {
     // case Block(statements: Expr*) => prefix
     case Loop(l, r)             => buildExprString(prefix, nodeString = "Loop", toFormattedString(prefix + INDENT)(l), toFormattedString(prefix + INDENT)(r))
     case Assignment(l, r)       => buildExprString(prefix, nodeString = "Assignment", toFormattedString(prefix + INDENT)(l), toFormattedString(prefix + INDENT)(r))
-    case Block(b @ _*)          => buildBlockString(prefix, b) //TODO might need to use buildUnaryExpreString
+    case Block(b @ _*)          => buildBlockString(prefix, b)
     case Conditional(e, b1, b2) => buildTrinaryExprString(prefix, "Conditional", toFormattedString(prefix + INDENT)(e), toFormattedString(prefix + INDENT)(b1), toFormattedString(prefix + INDENT)(b2))
-    // TODO finish conditional and block
-    //prefix, "conditional" conditional block block
   }
-  def toFormattedString(e: Expr): String = //TODO this will probably have to be buildblockString("", b)
-    toFormattedString("")(e) //TODO this might be the issue, have it work with block
+  def toFormattedString(e: Expr): String = toFormattedString("")(e)
 
   def buildExprString(prefix: String, nodeString: String, leftString: String, rightString: String) = {
     val result = new StringBuilder(prefix)
