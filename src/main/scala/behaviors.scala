@@ -52,7 +52,7 @@ object behaviors {
     // case Block(statements: Expr*) => prefix
     case Loop(l, r)             => buildExprString(prefix, nodeString = "Loop", toFormattedString(prefix + INDENT)(l), toFormattedString(prefix + INDENT)(r))
     case Assignment(l, r)       => buildExprString(prefix, nodeString = "Assignment", toFormattedString(prefix + INDENT)(l), toFormattedString(prefix + INDENT)(r))
-    case Block(e)               => prefix + e.toString //TODO might need to use buildUnaryExpreString
+    case Block(e @_*)               => prefix + e.toString //TODO might need to use buildUnaryExpreString
     case Conditional(e, b1, b2) => buildTrinaryExprString(prefix, "Conditional", toFormattedString(prefix + INDENT)(e), toFormattedString(prefix + INDENT)(b1), toFormattedString(prefix + INDENT)(b2))
     // TODO finish conditional and block
   //prefix, "conditional" conditional block block
