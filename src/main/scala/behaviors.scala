@@ -38,24 +38,23 @@ object behaviors {
   // Need Pretty Printer later. Only in block we'll worry about indentation. Try not to do it anywhere else
   // IMPORTANT ONE, HAVE TO COMPLETE
   def toFormattedString(prefix: String)(e: Expr): String = e match {
-    case Constant(c) => prefix + c.toString
-    case UMinus(r)   => buildUnaryExprString(prefix, "UMinus", toFormattedString(prefix + INDENT)(r))
-    case Plus(l, r)  => buildExprString(prefix, "Plus", toFormattedString(prefix + INDENT)(l), toFormattedString(prefix + INDENT)(r))
-    case Minus(l, r) => buildExprString(prefix, "Minus", toFormattedString(prefix + INDENT)(l), toFormattedString(prefix + INDENT)(r))
-    case Times(l, r) => buildExprString(prefix, "Times", toFormattedString(prefix + INDENT)(l), toFormattedString(prefix + INDENT)(r))
-    case Div(l, r)   => buildExprString(prefix, "Div", toFormattedString(prefix + INDENT)(l), toFormattedString(prefix + INDENT)(r))
-    case Mod(l, r)   => buildExprString(prefix, "Mod", toFormattedString(prefix + INDENT)(l), toFormattedString(prefix + INDENT)(r))
-    case Var(v)      => prefix + v.toString
+    case Constant(c)            => prefix + c.toString
+    case UMinus(r)              => buildUnaryExprString(prefix, "UMinus", toFormattedString(prefix + INDENT)(r))
+    case Plus(l, r)             => buildExprString(prefix, "Plus", toFormattedString(prefix + INDENT)(l), toFormattedString(prefix + INDENT)(r))
+    case Minus(l, r)            => buildExprString(prefix, "Minus", toFormattedString(prefix + INDENT)(l), toFormattedString(prefix + INDENT)(r))
+    case Times(l, r)            => buildExprString(prefix, "Times", toFormattedString(prefix + INDENT)(l), toFormattedString(prefix + INDENT)(r))
+    case Div(l, r)              => buildExprString(prefix, "Div", toFormattedString(prefix + INDENT)(l), toFormattedString(prefix + INDENT)(r))
+    case Mod(l, r)              => buildExprString(prefix, "Mod", toFormattedString(prefix + INDENT)(l), toFormattedString(prefix + INDENT)(r))
+    case Var(v)                 => prefix + v.toString
     // case Loop(l,r) => buildExprString(prefix)
-    // case Conditional(c,l,r) => 
-    // case Assignment(l,r) => 
+    // case Conditional(c,l,r) =>
+    // case Assignment(l,r) =>
     // case Block(statements: Expr*) => prefix
     case Loop(l, r)             => buildExprString(prefix, nodeString = "Loop", toFormattedString(prefix + INDENT)(l), toFormattedString(prefix + INDENT)(r))
     case Assignment(l, r)       => buildExprString(prefix, nodeString = "Assignment", toFormattedString(prefix + INDENT)(l), toFormattedString(prefix + INDENT)(r))
-    case Block(e @_*)               => prefix + e.toString //TODO might need to use buildUnaryExpreString
+
+    case Block(b @ _*)          => buildBlockString(prefix, b)
     case Conditional(e, b1, b2) => buildTrinaryExprString(prefix, "Conditional", toFormattedString(prefix + INDENT)(e), toFormattedString(prefix + INDENT)(b1), toFormattedString(prefix + INDENT)(b2))
-    // TODO finish conditional and block
-  //prefix, "conditional" conditional block block
   }
   def toFormattedString(e: Expr): String = toFormattedString("")(e)
 
@@ -122,6 +121,13 @@ object behaviors {
     result.append(rightString)
     result.append(")")
     result.toString
+  }
+  def buildBlockString(prefix: String, nodeExprs: Seq[Expr]) = {
+    val result = new StringBuilder(prefix)
+    val strings: Seq[String] = nodeExprs.map(expr => toFormattedString(prefix)(expr))
+    strings.foreach(string => result.append(string))
+    result.toString
+
   }
 
   def buildUnaryExprString(prefix: String, nodeString: String, exprString: String) = {
