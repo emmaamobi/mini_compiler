@@ -3,6 +3,7 @@ package edu.luc.cs.laufer.cs473.expressions
 import org.scalatest.FunSuite
 import TestFixtures.{simple1, simple1string, simple2, simple2string, _}
 import edu.luc.cs.laufer.cs473.expressions.ast.Expr
+import behaviors._
 
 object MainCombinatorParser extends App {
   val parsedExpr = CombinatorParser.parseAll(CombinatorParser.expr, complex1string)
@@ -24,8 +25,30 @@ class TestCombinatorParser extends FunSuite {
     }
   }
 
-  testParser("Given complex1", complex1string, complex1)
-  testParser("Given complex2", complex1string2, complex2)
-  testParser("Testing single assignment", simple1string, simple1)
-  testParser("Testing multiple assignments", simple2string, simple2)
+  def testUglyPrinter(description: String, input: String, parsed: String): Unit = {
+    test(description) {
+      val parsedExpr = CombinatorParser.parseAll(CombinatorParser.topLevel, input).get
+      val expr = toFormattedString(parsedExpr)
+      assert(expr === parsed)
+    }
+  }
+
+  //  def testPrettyPrinter(description: String, input: String, parsed: String): Unit = {
+  //    test(description) {
+  //      val parsedExpr = CombinatorParser.parseAll(CombinatorParser.topLevel, input).get
+  //      val expr = toPrettyFormat(parsedExpr)
+  //      assert(expr === parsed)
+  //    }
+  //  }
+
+  //testUglyPrinter("Given complex1", complex1string, complex1)
+  //testUglyPrinter("Given complex2", complex1string2, complex2)
+  testParser("Test single assignment", simple1string, simple1)
+  testParser("Test multiple assignments", simple2string, simple2)
+  testParser("Test simple conditional", simple3string, simple3)
+  testParser("Test simple conditional with else", simple4string, simple4)
+  testParser("Test loop", simple5string, simple5)
+  testParser("Test multiple operators and assignments", complex3string, complex3)
+  testParser("Test loop with conditional, operator, and assignment", complex4string, complex4)
+  //testUglyPrinter("Testing ugly printer", simple1string, simple1ugly)
 }

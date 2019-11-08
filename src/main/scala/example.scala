@@ -18,7 +18,7 @@ object example extends App {
   )
 
   val res1 = CombinatorParser.parseAll(CombinatorParser.topLevel, "x = 2;")
-  val res2 = CombinatorParser.parseAll(CombinatorParser.topLevel, "if (1) { 1 + 2; }")
+  val res2 = CombinatorParser.parseAll(CombinatorParser.topLevel, "while (y) { if (3) { y = 3; } else { y = 1; }}")
 
   println(res1)
   println(res2)
