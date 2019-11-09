@@ -57,15 +57,15 @@ object behaviors {
   def toPrettyFormatABC(prefix: String)(e: Expr): String = e match {
 
     case Constant(c)              => prefix + c.toString
-    case UMinus(r)                => buildUnaryPrettyString(prefix, "----", toPrettyFormatABC(prefix)(r)) //TODO forgot what uminus does
-    case Plus(l, r)               => buildPrettySimple(prefix, " + ", toPrettyFormatABC(prefix)(l), toPrettyFormatABC(prefix)(r))
-    case Minus(l, r)              => buildPrettySimple(prefix, " - ", toPrettyFormatABC(prefix)(l), toPrettyFormatABC(prefix)(r))
-    case Times(l, r)              => buildPrettySimple(prefix, " * ", toPrettyFormatABC(prefix)(l), toPrettyFormatABC(prefix)(r))
-    case Div(l, r)                => buildPrettySimple(prefix, " / ", toPrettyFormatABC(prefix)(l), toPrettyFormatABC(prefix)(r))
-    case Mod(l, r)                => buildPrettySimple(prefix, " % ", toPrettyFormatABC(prefix)(l), toPrettyFormatABC(prefix)(r))
+    case UMinus(r)                => buildUnaryPrettyString(prefix, "-", toPrettyFormatABC(prefix)(r)) //TODO forgot what uminus does
+    case Plus(l, r)               => buildPrettySign(prefix, " + ", toPrettyFormatABC(prefix)(l), toPrettyFormatABC(prefix)(r))
+    case Minus(l, r)              => buildPrettySign(prefix, " - ", toPrettyFormatABC(prefix)(l), toPrettyFormatABC(prefix)(r))
+    case Times(l, r)              => buildPrettySign(prefix, " * ", toPrettyFormatABC(prefix)(l), toPrettyFormatABC(prefix)(r))
+    case Div(l, r)                => buildPrettySign(prefix, " / ", toPrettyFormatABC(prefix)(l), toPrettyFormatABC(prefix)(r))
+    case Mod(l, r)                => buildPrettySign(prefix, " % ", toPrettyFormatABC(prefix)(l), toPrettyFormatABC(prefix)(r))
     case Var(v)                   => prefix + v.toString
     case Loop(l, r)               => buildPrettyLoop(prefix, "while", l, r)
-    case Assignment(l, r)         => buildPrettySimple(prefix, " = ", toPrettyFormatABC(prefix)(l), toPrettyFormatABC(prefix)(r))
+    case Assignment(l, r)         => buildPrettyAssign(prefix, " = ", toPrettyFormatABC(prefix)(l), toPrettyFormatABC(prefix)(r))
     case Block(e @ _*)            => buildPrettyBlockString(prefix, e)
     case Conditional(con, b1, b2) => buildPrettyTrinary(prefix, toPrettyFormatABC(prefix)(con), toPrettyFormatABC(prefix)(b1), toPrettyFormatABC(prefix)(b2))
 
@@ -138,13 +138,26 @@ object behaviors {
     result.toString
   }
 
-  def buildPrettySimple(prefix: String, sign: String, leftExpr: String, rightExpr: String) = {
+  def buildPrettySign(prefix: String, sign: String, leftExpr: String, rightExpr: String) = {
+    val result = new StringBuilder(prefix)
+    result.append("(")
+    result.append(leftExpr)
+    result.append(sign)
+    result.append(rightExpr)
+    result.append(")")
+    result.toString
+  }
+
+  def buildPrettyAssign(prefix: String, sign: String, leftExpr: String, rightExpr: String) = {
     val result = new StringBuilder(prefix)
     result.append(leftExpr)
     result.append(sign)
     result.append(rightExpr)
+    result.append(";")
+    result.append(EOL)
     result.toString
   }
+
   def buildPrettyLoop(prefix: String, l: String, leftExpr: Expr, rightExpr: Expr) = {
     val result = new StringBuilder(prefix)
     result.append(l)
@@ -159,14 +172,10 @@ object behaviors {
     val result = new StringBuilder(prefix)
     result.append("if (")
     result.append(conditional)
-    result.append(") {")
-    result.append(EOL)
+    result.append(")")
     result.append(leftString)
-    result.append(EOL)
-    result.append("} else {")
+    result.append(" else ")
     result.append(rightString)
-    result.append(EOL)
-    result.append("}")
     result.append(EOL)
     result.toString()
   }
