@@ -54,30 +54,20 @@ object behaviors {
   }
   def toFormattedString(e: Expr): String = toFormattedString("")(e)
 
-  def toPrettyFormatABC(prefix: String, e: Expr): String = e match {
+  def toPrettyFormatABC(prefix: String)(e: Expr): String = e match {
 
-    case Constant(c)      => "hello"
-    case UMinus(r)        => buildPrettyString("  ", "")
-    case Plus(l, r)       => buildPrettyString("", l )
-    case Minus(l, r)      => buildPrettyString("", "Minus", toFormattedString(INDENT)(l) + toFormattedString(INDENT)(r))
-    case Times(l, r)      => buildPrettyString("", "Times", toFormattedString(INDENT)(l), toFormattedString(INDENT)(r))
-    case Div(l, r)        => buildPrettyString("", "Div", toFormattedString(INDENT)(l), toFormattedString(INDENT)(r))
-    case Mod(l, r)        => buildPrettyString("", "Mod", toFormattedString(INDENT)(l), toFormattedString(INDENT)(r))
-    case Var(v)           => v.toString
-    // case Loop(l,r) => buildPrettyString(prefix)
-    // case Conditional(c,l,r) =>
-    // case Assignment(l,r) =>
-    // case Block(statements: Expr*) => prefix
-    case Loop(l, r)       => buildPrettyString("", l + r)
-    //      nodeString = "Loop",
-    //      toFormattedString("" + INDENT)(l),
-    //      toFormattedString("" + INDENT)(r))
-    case Assignment(l, r) => buildPrettyString("", l)
-    //      nodeString = " = ",
-    //      toFormattedString("" + INDENT)(l),
-    //      toFormattedString("" + INDENT)(r))
-    case Block(e @ _*)    => buildPrettyString("  ", e) //TODO might need to use buildUnaryExpreString
-    case Conditional(e, b1, b2) => buildTrinaryExprString(
+    case Constant(c)      => prefix + c.toString
+    case UMinus(r)        => buildUnaryPrettyString(prefix, "----", toPrettyFormatABC(prefix)(r)) //TODO forgot what uminus does
+    case Plus(l, r)       => buildPrettySimple(prefix, " + ", toPrettyFormatABC(prefix)(l), toPrettyFormatABC(prefix)(r))
+    case Minus(l, r)      => buildPrettySimple(prefix, " - ", toPrettyFormatABC(prefix)(l), toPrettyFormatABC(prefix)(r))
+    case Times(l, r)      => buildPrettySimple(prefix, " * ", toPrettyFormatABC(prefix)(l), toPrettyFormatABC(prefix)(r))
+    case Div(l, r)        => buildPrettySimple(prefix, " / ", toPrettyFormatABC(prefix)(l), toPrettyFormatABC(prefix)(r))
+    case Mod(l, r)        => buildPrettySimple(prefix, " % ", toPrettyFormatABC(prefix)(l), toPrettyFormatABC(prefix)(r))
+    case Var(v)           => prefix + v.toString
+    case Loop(l, r)       => buildPrettyLoop(prefix, "while", l, r)
+    case Assignment(l, r) => buildPrettySimple(prefix, " = ", toPrettyFormatABC(prefix)(l), toPrettyFormatABC(prefix)(r))
+    case Block(e @ _*)    => ??? //buildPrettyString("  ", e) //TODO finish this
+    case Conditional(e, b1, b2) => buildTrinaryExprString( //TODO finish this
       "",
       "Conditional",
       toFormattedString("" + INDENT)(e),
@@ -87,8 +77,9 @@ object behaviors {
     case _ => ???
 
   }
+  def toPrettyFormatABC(e: Expr): String = toPrettyFormatABC("")(e)
 
-  def buildPrettyString(prefix: String, e: Seq[Expr]): String = {
+  def buildPrettyBlockString(prefix: String, e: Seq[Expr]): String = {
     val result = new StringBuilder(prefix)
     val strings = e.map(expr => toPrettyFormatABC(prefix)(expr))
     strings.foreach(strings => result.append(strings))
@@ -107,6 +98,7 @@ object behaviors {
     result.append(")")
     result.toString
   }
+
   def buildTrinaryExprString(prefix: String, nodeString: String, conditional: String, leftString: String, rightString: String) = {
     //TODO finish this
     val result = new StringBuilder(prefix)
@@ -138,6 +130,32 @@ object behaviors {
     result.append(EOL)
     result.append(exprString)
     result.append(")")
+    result.toString
+  }
+  def buildUnaryPrettyString(prefix: String, nodeString: String, exprString: String) = {
+    val result = new StringBuilder(prefix)
+    result.append(nodeString)
+    result.append("(")
+    result.append(EOL)
+    result.append(exprString)
+    result.append(")")
+    result.toString
+  }
+
+  def buildPrettySimple(prefix: String, sign: String, leftExpr: String, rightExpr: String) = {
+    val result = new StringBuilder(prefix)
+    result.append(leftExpr)
+    result.append(sign)
+    result.append(rightExpr)
+    result.toString
+  }
+  def buildPrettyLoop(prefix: String, l: String, leftExpr: Expr, rightExpr: Expr) = {
+    val result = new StringBuilder(prefix)
+    result.append(l)
+    result.append("(")
+    result.append(toPrettyFormatABC(prefix)(leftExpr))
+    result.append(")")
+    result.append(toPrettyFormatABC(prefix)(rightExpr))
     result.toString
   }
 
