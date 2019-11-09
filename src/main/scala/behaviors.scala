@@ -46,10 +46,6 @@ object behaviors {
     case Div(l, r)              => buildExprString(prefix, "Div", toFormattedString(prefix + INDENT)(l), toFormattedString(prefix + INDENT)(r))
     case Mod(l, r)              => buildExprString(prefix, "Mod", toFormattedString(prefix + INDENT)(l), toFormattedString(prefix + INDENT)(r))
     case Var(v)                 => prefix + v.toString
-    // case Loop(l,r) => buildExprString(prefix)
-    // case Conditional(c,l,r) =>
-    // case Assignment(l,r) =>
-    // case Block(statements: Expr*) => prefix
     case Loop(l, r)             => buildExprString(prefix, nodeString = "Loop", toFormattedString(prefix + INDENT)(l), toFormattedString(prefix + INDENT)(r))
     case Assignment(l, r)       => buildExprString(prefix, nodeString = "Assignment", toFormattedString(prefix + INDENT)(l), toFormattedString(prefix + INDENT)(r))
     case Block(b @ _*)          => buildBlockString(prefix, b)
