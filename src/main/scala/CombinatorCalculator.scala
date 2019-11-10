@@ -34,7 +34,14 @@ object CombinatorCalculator extends App {
     breakable {
       while (true) {
         try {
-          processExpr(reader.readLine(prompt))
+          var line = reader.readLine(prompt)
+
+          while (line.slice(line.length - 2, line.length) != "\n\n") {
+            // println("Line is: " + line)
+            line += reader.readLine("") + "\n"
+          }
+          processExpr(line)
+
         } catch {
           case x: org.jline.reader.EndOfFileException     => break
           case y: org.jline.reader.UserInterruptException => break
