@@ -20,8 +20,8 @@ object CombinatorCalculator extends App {
       println("The parsed expression is: ")
       println(expr)
       println(toFormattedString(expr))
-      // println("The pretty form is:")
-      // println(toPrettyFormat(expr))
+      println("The pretty form is:")
+      println(toPrettyFormatABC(expr))
       // println("It has size " + size(expr) + " and height " + height(expr))
       // println("It evaluates to " + evaluate(expr))
     }
