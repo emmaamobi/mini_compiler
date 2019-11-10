@@ -37,7 +37,7 @@ object CombinatorCalculator extends App {
           var line = reader.readLine(prompt)
           while (line.slice(line.length - 2, line.length) != "\n\n") {
             // println("Line is: " + line)
-            line += reader.readLine("|") + "\n"
+            line += reader.readLine("| ") + "\n"
           }
           processExpr(line)
 
