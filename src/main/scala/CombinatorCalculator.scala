@@ -19,7 +19,7 @@ object CombinatorCalculator extends App {
       import behaviors._
       val expr = result.get
       println("The parsed expression is: ")
-      println(expr)
+      // println(expr)
       println(toFormattedString(expr))
       println("The pretty form is:")
       println(toPrettyFormatABC(expr))
@@ -35,7 +35,6 @@ object CombinatorCalculator extends App {
       while (true) {
         try {
           var line = reader.readLine(prompt)
-
           while (line.slice(line.length - 2, line.length) != "\n\n") {
             // println("Line is: " + line)
             line += reader.readLine("") + "\n"
