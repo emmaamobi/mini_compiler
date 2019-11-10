@@ -64,7 +64,7 @@ object behaviors {
     case Div(l, r)                => buildPrettySign(prefix, " / ", toPrettyFormatABC(prefix)(l), toPrettyFormatABC(prefix)(r))
     case Mod(l, r)                => buildPrettySign(prefix, " % ", toPrettyFormatABC(prefix)(l), toPrettyFormatABC(prefix)(r))
     case Var(v)                   => prefix + v.toString
-    case Loop(l, r)               => buildPrettyLoop(prefix, "while", l, r)
+    case Loop(l, r)               => buildPrettyLoop(prefix, "while", toPrettyFormatABC(prefix)(l), toPrettyFormatABC(prefix)(r))
     case Assignment(l, r)         => buildPrettyAssign(prefix, " = ", toPrettyFormatABC(prefix)(l), toPrettyFormatABC(prefix)(r))
     case Block(e @ _*)            => buildPrettyBlockString(prefix, e)
     case Conditional(con, b1, b2) => buildPrettyTrinary(prefix, toPrettyFormatABC(prefix)(con), toPrettyFormatABC(prefix)(b1), toPrettyFormatABC(prefix)(b2))
@@ -158,13 +158,13 @@ object behaviors {
     result.toString
   }
 
-  def buildPrettyLoop(prefix: String, l: String, leftExpr: Expr, rightExpr: Expr) = {
+  def buildPrettyLoop(prefix: String, l: String, leftExpr: String, rightExpr: String) = {
     val result = new StringBuilder(prefix)
     result.append(l)
     result.append("(")
-    result.append(toPrettyFormatABC(prefix)(leftExpr))
+    result.append(leftExpr)
     result.append(")")
-    result.append(toPrettyFormatABC(prefix)(rightExpr))
+    result.append(rightExpr)
     result.toString
   }
 
