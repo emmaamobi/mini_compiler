@@ -19,7 +19,7 @@ object CombinatorCalculator extends App {
       import behaviors._
       val expr = result.get
       println("The parsed expression is: ")
-      println(expr)
+      // println(expr)
       println(toFormattedString(expr))
       println("The pretty form is:")
       println(toPrettyFormatABC(expr))
