@@ -2,11 +2,19 @@ package edu.luc.cs.laufer.cs473.expressions
 import org.jline.reader.LineReaderBuilder
 import org.jline.terminal.TerminalBuilder
 import scala.util.control.Breaks._
+import scala.collection.mutable.HashMap
+
+sealed trait Value
+case class Num(v:Int) extends Value
 
 object CombinatorCalculator extends App {
   val terminal = TerminalBuilder.terminal
   val reader = LineReaderBuilder.builder.terminal(terminal).build
   val prompt = ">> Enter infix expression: "
+  val store = HashMap.empty[String, Int]
+  // println(Value(5))
+  // println(store)
+  // println(Value(5).get)
 
   // val store = behaviors.newstore
   def processExpr(input: String): Unit = {
@@ -19,7 +27,7 @@ object CombinatorCalculator extends App {
       import behaviors._
       val expr = result.get
       println("The parsed expression is: ")
-      // println(expr)
+      println(expr)
       println(toFormattedString(expr))
       println("The pretty form is:")
       println(toPrettyFormatABC(expr))
