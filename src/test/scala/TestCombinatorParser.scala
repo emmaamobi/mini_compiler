@@ -10,7 +10,7 @@ object MainCombinatorParser extends App {
   println(parsedExpr.get)
   println(complex1)
   println(parsedExpr.get == complex1)
-  println(behaviors.evaluate(parsedExpr.get))
+  //println(behaviors.evaluate(parsedExpr.get))
 }
 
 class TestCombinatorParser extends FunSuite {

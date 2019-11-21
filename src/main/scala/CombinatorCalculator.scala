@@ -5,7 +5,7 @@ import scala.util.control.Breaks._
 import scala.collection.mutable.HashMap
 
 sealed trait Value
-case class Num(v:Int) extends Value
+case class Num(v: Int) extends Value
 
 object CombinatorCalculator extends App {
   val terminal = TerminalBuilder.terminal
