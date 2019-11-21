@@ -4,7 +4,7 @@ import ast._
 
 object behaviors {
 
-  def evaluate(e: Expr): Int = e match {
+  def evaluate(e: Expr): Int = e match { //TODO for 3b
     case Constant(c) => c
     case UMinus(r)   => -evaluate(r)
     case Plus(l, r)  => evaluate(l) + evaluate(r)
@@ -12,7 +12,6 @@ object behaviors {
     case Times(l, r) => evaluate(l) * evaluate(r)
     case Div(l, r)   => evaluate(l) / evaluate(r)
     case Mod(l, r)   => evaluate(l) % evaluate(r)
-
   }
 
   def size(e: Expr): Int = e match {
