@@ -29,14 +29,14 @@ object behaviors {
 
   def evaluate(m: Store)(e: Expr): Result = e match { //TODO for 3b
     case Constant(c) => Success(Cell(Num(c)))
-    case UMinus(r)   => evalUnary(m)(r , "-")
+    case UMinus(r)   => evalUnary(m)(r, "-")
     case Plus(l, r)  => evalSigns(m)(l, "+", r)
     case Minus(l, r) => evalSigns(m)(l, "-", r)
     case Times(l, r) => evalSigns(m)(l, "*", r)
     case Div(l, r)   => evalSigns(m)(l, "/", r)
     case Mod(l, r)   => evalSigns(m)(l, "%", r)
-    case Var(v) => lookup(m)(v)
-    case Loop(l,r) => ???
+    case Var(v)      => lookup(m)(v)
+    case Loop(l, r)  => ???
     case Assignment(l, r) => {
       for {
         lvalue <- lookup(m)(l.toString)
@@ -44,15 +44,25 @@ object behaviors {
         _ <- Success(lvalue.set(rvalue))
       } yield Cell.NULL
     }
-    case Block(s@_*) => ???
-    case Conditional(e,l,r) => ???
+    case Block(s @ _*) => {
+      val i = s.iterator
+      var result: Cell = Cell.NULL
+      while (i.hasNext) {
+        evaluate(m)(i.next()) match {
+          case Success(r)     => result = r
+          case f @ Failure(_) => return f
+        }
+      }
+      Success(result)
+    }
+    case Conditional(e, l, r) => ???
   }
-  def evalUnary(m: Store)(v : Expr, sign : String) : Result = {
+  def evalUnary(m: Store)(v: Expr, sign: String): Result = {
     val v1 = evaluate(m)(v)
     v1 match {
-      case (Success(Cell(Num(v1)))) => {
-        case "+" => Success(Cell(Num(v1)))
+      case Success(Cell(Num(v1))) => {
         case "-" => Success(Cell(Num(-v1)))
+        case _   => Success(Cell(Num(v1)))
       }
       case _ => Failure(new RuntimeException("That didn't work"))
     }
