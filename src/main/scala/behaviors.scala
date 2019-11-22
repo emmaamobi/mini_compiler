@@ -1,6 +1,7 @@
 package edu.luc.cs.laufer.cs473.expressions
 
 import ast._
+import scala.collection.mutable.HashMap
 import scala.util.{Failure, Success, Try}
 
 object behaviors {
@@ -14,7 +15,7 @@ object behaviors {
     val NULL = Cell(0)
   }
 
-  type Instance = Map[String, Cell]
+  type Instance = HashMap[String, Value]
   type Store = Instance
   sealed trait Value
   case class Num(value: Int) extends Value
@@ -38,11 +39,18 @@ object behaviors {
     case Var(v)      => lookup(m)(v)
     case Loop(l, r)  => ???
     case Assignment(l, r) => {
-      for {
-        lvalue <- lookup(m)(l.toString)
-        Cell(rvalue) <- evaluate(m)(r)
-        _ <- Success(lvalue.set(rvalue))
-      } yield Cell.NULL
+      if (m.contains(l.toString())) {
+        m(l.toString()) = Num(r.toString().toInt)
+        Success(Cell(Num(r.toString().toInt)))
+      } else {
+        m += (l.toString() -> Num(r.toString().toInt))
+        Success(Cell(Num(r.toString().toInt)))
+      }
+      // for {
+      //   lvalue <- lookup(m)(l.toString)
+      //   Cell(rvalue) <- evaluate(m)(r)
+      //   _ <- Success(lvalue.set(rvalue))
+      // } yield Cell.NULL
     }
     case Block(s @ _*) => {
       val i = s.iterator

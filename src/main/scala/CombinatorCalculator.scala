@@ -1,20 +1,20 @@
 package edu.luc.cs.laufer.cs473.expressions
-import edu.luc.cs.laufer.cs473.expressions.behaviors.Cell
+import edu.luc.cs.laufer.cs473.expressions.behaviors.Value
 import org.jline.reader.LineReaderBuilder
 import org.jline.terminal.TerminalBuilder
 
 import scala.util.control.Breaks._
 import scala.collection.mutable.HashMap
 
-sealed trait Value
-case class Num(v: Int) extends Value
+// sealed trait Value
+// case class Num(v: Int) extends Value
 
 object CombinatorCalculator extends App {
   val terminal = TerminalBuilder.terminal
   val reader = LineReaderBuilder.builder.terminal(terminal).build
   val prompt = ">> Enter infix expression: "
   //val store = HashMap.empty[String, Int]
-  val store = Map.empty[String, Cell]
+  val store = HashMap.empty[String, Value]
   // println(Value(5))
   // println(store)
   // println(Value(5).get)
