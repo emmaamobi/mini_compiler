@@ -60,12 +60,13 @@ object behaviors {
   def evalUnary(m: Store)(v: Expr, sign: String): Result = {
     val v1 = evaluate(m)(v)
     v1 match {
-      case Success(Cell(Num(v1))) => {
-        case "-" => Success(Cell(Num(-v1)))
-        case _   => Success(Cell(Num(v1)))
-      }
-      case _ => Failure(new RuntimeException("That didn't work"))
+      case Success(Cell(Num(v1))) => Success(Cell(Num(evalUnarySign(m)(v1, sign))))
+      case _                      => Failure(new RuntimeException("That didn't work"))
     }
+  }
+  def evalUnarySign(m: Store)(v1: Int, sign: String): Int = sign match {
+    case "-" => -v1
+    case _   => v1
   }
   def evalSigns(m: Store)(l: Expr, sign: String, r: Expr): Result = {
     val v1 = evaluate(m)(l)
