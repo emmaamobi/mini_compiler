@@ -37,7 +37,13 @@ object behaviors {
     case Mod(l, r)   => evalSigns(m)(l, "%", r)
     case Var(v) => lookup(m)(v)
     case Loop(l,r) => ???
-    case Assignment(l, r) => ???
+    case Assignment(l, r) => {
+      for {
+        lvalue <- lookup(m)(l.toString)
+        Cell(rvalue) <- evaluate(m)(r)
+        _ <- Success(lvalue.set(rvalue))
+      } yield Cell.NULL
+    }
     case Block(s@_*) => ???
     case Conditional(e,l,r) => ???
   }
