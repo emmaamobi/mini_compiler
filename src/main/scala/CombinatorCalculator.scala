@@ -1,6 +1,8 @@
 package edu.luc.cs.laufer.cs473.expressions
+import edu.luc.cs.laufer.cs473.expressions.behaviors.Cell
 import org.jline.reader.LineReaderBuilder
 import org.jline.terminal.TerminalBuilder
+
 import scala.util.control.Breaks._
 import scala.collection.mutable.HashMap
 
@@ -11,7 +13,8 @@ object CombinatorCalculator extends App {
   val terminal = TerminalBuilder.terminal
   val reader = LineReaderBuilder.builder.terminal(terminal).build
   val prompt = ">> Enter infix expression: "
-  val store = HashMap.empty[String, Int]
+  //val store = HashMap.empty[String, Int]
+  val store = Map.empty[String, Cell]
   // println(Value(5))
   // println(store)
   // println(Value(5).get)
@@ -32,7 +35,8 @@ object CombinatorCalculator extends App {
       println("The pretty form is:")
       println(toPrettyFormatABC(expr))
       // println("It has size " + size(expr) + " and height " + height(expr))
-      // println("It evaluates to " + evaluate(expr))
+      println("It evaluates to " + evaluate(store)(expr))
+      println(store)
     }
   }
 
