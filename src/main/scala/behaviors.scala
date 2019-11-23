@@ -40,7 +40,7 @@ object behaviors {
       if (m.contains(v)) {
         Success(Cell(m(v)))
       } else {
-        Success(Cell(Num(0)))
+        Failure(new NoSuchFieldException(v))
       }
     }
     case Loop(l, r) => ???
