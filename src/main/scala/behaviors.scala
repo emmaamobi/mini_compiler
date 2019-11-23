@@ -21,12 +21,12 @@ object behaviors {
   case class Num(value: Int) extends Value
   type Result = Try[Cell]
 
-  def lookup(store: Store)(name: String): Result =
-    store.get(name).fold {
-      Failure(new NoSuchFieldException(name)): Result
-    } {
-      Success(_)
-    }
+  // def lookup(store: Store)(name: String): Result =
+  //   store.get(name).fold {
+  //     Failure(new NoSuchFieldException(name)): Result
+  //   } {
+  //     Success(_)
+  //   }
 
   def evaluate(m: Store)(e: Expr): Result = e match { //TODO for 3b
     case Constant(c) => Success(Cell(Num(c)))
@@ -36,21 +36,31 @@ object behaviors {
     case Times(l, r) => evalSigns(m)(l, "*", r)
     case Div(l, r)   => evalSigns(m)(l, "/", r)
     case Mod(l, r)   => evalSigns(m)(l, "%", r)
-    case Var(v)      => lookup(m)(v)
-    case Loop(l, r)  => ???
-    case Assignment(l, r) => {
-      if (m.contains(l.toString())) {
-        m(l.toString()) = Num(r.toString().toInt)
-        Success(Cell(Num(r.toString().toInt)))
+    case Var(v) => {
+      if (m.contains(v)) {
+        Success(Cell(m(v)))
       } else {
-        m += (l.toString() -> Num(r.toString().toInt))
-        Success(Cell(Num(r.toString().toInt)))
+        Success(Cell(Num(0)))
       }
-      // for {
-      //   lvalue <- lookup(m)(l.toString)
-      //   Cell(rvalue) <- evaluate(m)(r)
-      //   _ <- Success(lvalue.set(rvalue))
-      // } yield Cell.NULL
+    }
+    case Loop(l, r) => ???
+    case Assignment(l, r) => {
+      println(l)
+      println(l.toString())
+      println(r)
+      println(r.toString())
+      Success(Cell(Num(0)))
+
+      val valueL = l.toString.substring(l.toString.indexOf("(") + 1, l.toString.indexOf(")"))
+      val valueR = r.toString.substring(r.toString.indexOf("(") + 1, r.toString.indexOf(")"))
+
+      if (m.contains(valueL)) {
+        m(valueL) = Num(valueR.toInt)
+        Success(Cell(Num(valueR.toInt)))
+      } else {
+        m += (valueL -> Num(valueR.toInt))
+        Success(Cell(Num(valueR.toInt)))
+      }
     }
     case Block(s @ _*) => {
       val i = s.iterator
