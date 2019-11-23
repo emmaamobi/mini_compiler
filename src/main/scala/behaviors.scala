@@ -19,7 +19,7 @@ object behaviors {
   type Store = Instance
   sealed trait Value
   case class Num(value: Int) extends Value
-  type Result = Try[Cell]
+  type Result = Try[Value]
 
   // def lookup(store: Store)(name: String): Result =
   //   store.get(name).fold {
@@ -29,7 +29,7 @@ object behaviors {
   //   }
 
   def evaluate(m: Store)(e: Expr): Result = e match { //TODO for 3b
-    case Constant(c) => Success(Cell(Num(c)))
+    case Constant(c) => Success(Num(c))
     case UMinus(r)   => evalUnary(m)(r, "-")
     case Plus(l, r)  => evalSigns(m)(l, "+", r)
     case Minus(l, r) => evalSigns(m)(l, "-", r)
@@ -38,7 +38,7 @@ object behaviors {
     case Mod(l, r)   => evalSigns(m)(l, "%", r)
     case Var(v) => {
       if (m.contains(v)) {
-        Success(Cell(m(v)))
+        Success(m(v))
       } else {
         Failure(new NoSuchFieldException(v))
       }
@@ -49,22 +49,22 @@ object behaviors {
       // println(l.toString())
       // println(r)
       // println(r.toString())
-      Success(Cell(Num(0)))
+      //Success(Num(0))
 
       val valueL = l.toString.substring(l.toString.indexOf("(") + 1, l.toString.indexOf(")"))
       val valueR = r.toString.substring(r.toString.indexOf("(") + 1, r.toString.indexOf(")"))
 
       if (m.contains(valueL)) {
         m(valueL) = Num(valueR.toInt)
-        Success(Cell(Num(valueR.toInt)))
+        Success(Num(valueR.toInt))
       } else {
         m += (valueL -> Num(valueR.toInt))
-        Success(Cell(Num(valueR.toInt)))
+        Success(Num(valueR.toInt))
       }
     }
     case Block(s @ _*) => {
       val i = s.iterator
-      var result: Cell = Cell.NULL
+      var result: Value = null
       while (i.hasNext) {
         evaluate(m)(i.next()) match {
           case Success(r)     => result = r
@@ -78,8 +78,8 @@ object behaviors {
   def evalUnary(m: Store)(v: Expr, sign: String): Result = {
     val v1 = evaluate(m)(v)
     v1 match {
-      case Success(Cell(Num(v1))) => Success(Cell(Num(evalUnarySign(m)(v1, sign))))
-      case _                      => Failure(new RuntimeException("That didn't work"))
+      case Success(Num(v1)) => Success(Num(evalUnarySign(m)(v1, sign)))
+      case _                => Failure(new RuntimeException("That didn't work"))
     }
   }
   def evalUnarySign(m: Store)(v1: Int, sign: String): Int = sign match {
@@ -90,8 +90,8 @@ object behaviors {
     val v1 = evaluate(m)(l)
     val v2 = evaluate(m)(r)
     (v1, v2) match {
-      case (Success(Cell(Num(v1))), Success(Cell(Num(v2)))) =>
-        Success(Cell(Num(signs(v1, sign, v2))))
+      case (Success(Num(v1)), Success(Num(v2))) =>
+        Success(Num(signs(v1, sign, v2)))
       case _ => Failure(new RuntimeException("That didn't work"))
     }
   }
