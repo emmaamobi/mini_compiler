@@ -45,10 +45,10 @@ object behaviors {
     }
     case Loop(l, r) => ???
     case Assignment(l, r) => {
-      println(l)
-      println(l.toString())
-      println(r)
-      println(r.toString())
+      // println(l)
+      // println(l.toString())
+      // println(r)
+      // println(r.toString())
       Success(Cell(Num(0)))
 
       val valueL = l.toString.substring(l.toString.indexOf("(") + 1, l.toString.indexOf(")"))
