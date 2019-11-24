@@ -53,7 +53,7 @@ object CombinatorParser extends JavaTokenParsers {
   def block: Parser[Expr] =
     "{" ~ rep(statement) ~ "}" ^^ {
       case _ ~ statements ~ _ => Block(statements: _*)
-    } //a code block has an expr between two curly braces?
+    }
 
   //conditional ::= "if" "(" expression ")" block [ "else" block ]
   def conditional: Parser[Expr] =
@@ -61,9 +61,5 @@ object CombinatorParser extends JavaTokenParsers {
       case "if" ~ _ ~ e ~ _ ~ l ~ None             => Conditional(e, l, Block())
       case "if" ~ _ ~ e ~ _ ~ l ~ Some("else" ~ r) => Conditional(e, l, r)
     }
-
-  //loop   ::= "while" "(" expression ")" block
-
-  //block       ::= "{" statement* "}"
 
 }

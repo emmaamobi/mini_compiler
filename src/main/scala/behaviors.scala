@@ -6,15 +6,6 @@ import scala.util.{Failure, Success, Try}
 
 object behaviors {
 
-  case class Cell(var value: Value) {
-    def get: Value = value
-    def set(value: Value): Unit = this.value = value
-  }
-  object Cell {
-    def apply(i: Int): Cell = Cell(Num(i))
-    val NULL = Cell(0)
-  }
-
   type Instance = HashMap[String, Value]
   type Store = Instance
   sealed trait Value
@@ -58,7 +49,6 @@ object behaviors {
             m += (valueL -> s.get)
             s
           }
-
         }
       }
     }
@@ -73,7 +63,6 @@ object behaviors {
       }
       Success(result)
     }
-
     case Conditional(e, l, r) => {
       val ans = evaluate(m)(e)
       ans match {
@@ -84,7 +73,6 @@ object behaviors {
           evaluate(m)(l)
         }
       }
-
     }
   }
   def evalUnary(m: Store)(v: Expr, sign: String): Result = {
@@ -102,9 +90,8 @@ object behaviors {
     val v1 = evaluate(m)(l)
     val v2 = evaluate(m)(r)
     (v1, v2) match {
-      case (Success(Num(v1)), Success(Num(v2))) =>
-        Success(Num(signs(v1, sign, v2)))
-      case _ => Failure(new RuntimeException("That didn't work"))
+      case (Success(Num(v1)), Success(Num(v2))) => Success(Num(signs(v1, sign, v2)))
+      case _                                    => Failure(new RuntimeException("That didn't work"))
     }
   }
   def signs(v1: Int, sign: String, v2: Int) = sign match {
@@ -135,8 +122,7 @@ object behaviors {
     case Mod(l, r)   => 1 + math.max(height(l), height(r))
     case Var(v)      => 1
   }
-  // Need Pretty Printer later. Only in block we'll worry about indentation. Try not to do it anywhere else
-  // IMPORTANT ONE, HAVE TO COMPLETE
+
   def toFormattedString(prefix: String)(e: Expr): String = e match {
     case Constant(c)            => prefix + c.toString
     case UMinus(r)              => buildUnaryExprString(prefix, "UMinus", toFormattedString(prefix + INDENT)(r))
@@ -148,7 +134,6 @@ object behaviors {
     case Var(v)                 => prefix + v.toString
     case Loop(l, r)             => buildExprString(prefix, nodeString = "Loop", toFormattedString(prefix + INDENT)(l), toFormattedString(prefix + INDENT)(r))
     case Assignment(l, r)       => buildExprString(prefix, nodeString = "Assignment", toFormattedString(prefix + INDENT)(l), toFormattedString(prefix + INDENT)(r))
-
     case Block(b @ _*)          => buildBlockString(prefix, b)
     case Conditional(e, b1, b2) => buildTrinaryExprString(prefix, "Conditional", toFormattedString(prefix + INDENT)(e), toFormattedString(prefix + INDENT)(b1), toFormattedString(prefix + INDENT)(b2))
   }
