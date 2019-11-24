@@ -43,23 +43,26 @@ object behaviors {
         Failure(new NoSuchFieldException(v))
       }
     }
-    case Loop(l, r) => ???
+    case Loop(l, r) => {
+      while (evaluate(m)(l) != Success(Num(0))) {
+        evaluate(m)(r)
+      }
+      evaluate(m)(l)
+    }
     case Assignment(l, r) => {
       // println(l)
       // println(l.toString())
       // println(r)
       // println(r.toString())
       //Success(Num(0))
-
       val valueL = l.toString.substring(l.toString.indexOf("(") + 1, l.toString.indexOf(")"))
-      val valueR = r.toString.substring(r.toString.indexOf("(") + 1, r.toString.indexOf(")"))
-
+      val valueR = evaluate(m)(r)
       if (m.contains(valueL)) {
-        m(valueL) = Num(valueR.toInt)
-        Success(Num(valueR.toInt))
+        m(valueL) = valueR.get
+        valueR
       } else {
-        m += (valueL -> Num(valueR.toInt))
-        Success(Num(valueR.toInt))
+        m += (valueL -> valueR.get)
+        valueR
       }
     }
     case Block(s @ _*) => {
