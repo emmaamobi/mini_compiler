@@ -85,7 +85,20 @@ object behaviors {
       }
       Success(result)
     }
-    case Conditional(e, l, r) => ???
+
+    case Conditional(e, l, r) => {
+      val valueRstr = r.toString.substring(r.toString.indexOf("(") + 1, r.toString.indexOf(")"))
+      val valueR = evaluate(m)(l)
+      valueR match {
+        case Failure(thrown) => {
+          Failure(new NoSuchFieldException(valueRstr))
+        }
+        case s => {
+          evaluate(m)(r)
+        }
+      }
+
+    }
   }
   def evalUnary(m: Store)(v: Expr, sign: String): Result = {
     val v1 = evaluate(m)(v)
