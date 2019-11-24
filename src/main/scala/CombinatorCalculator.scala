@@ -6,7 +6,6 @@ import org.jline.terminal.TerminalBuilder
 import scala.util.control.Breaks._
 import scala.collection.mutable.HashMap
 
-
 object CombinatorCalculator extends App {
   val terminal = TerminalBuilder.terminal
   val reader = LineReaderBuilder.builder.terminal(terminal).build
