@@ -21,7 +21,6 @@ object behaviors {
   case class Num(value: Int) extends Value
   type Result = Try[Value]
 
-
   def evaluate(m: Store)(e: Expr): Result = e match { //TODO for 3b
     case Constant(c) => Success(Num(c))
     case UMinus(r)   => evalUnary(m)(r, "-")
@@ -81,9 +80,8 @@ object behaviors {
     }
 
     case Conditional(e, l, r) => {
-      val valueRstr = r.toString.substring(r.toString.indexOf("(") + 1, r.toString.indexOf(")"))
-      val valueR = evaluate(m)(e)
-      valueR match {
+      val ans = evaluate(m)(e)
+      ans match {
         case Failure(thrown) => {
           evaluate(m)(r)
         }
