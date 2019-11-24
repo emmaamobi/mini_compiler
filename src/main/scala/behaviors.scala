@@ -21,12 +21,6 @@ object behaviors {
   case class Num(value: Int) extends Value
   type Result = Try[Value]
 
-  // def lookup(store: Store)(name: String): Result =
-  //   store.get(name).fold {
-  //     Failure(new NoSuchFieldException(name)): Result
-  //   } {
-  //     Success(_)
-  //   }
 
   def evaluate(m: Store)(e: Expr): Result = e match { //TODO for 3b
     case Constant(c) => Success(Num(c))
