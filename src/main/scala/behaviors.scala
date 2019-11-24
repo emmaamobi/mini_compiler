@@ -57,13 +57,38 @@ object behaviors {
       //Success(Num(0))
       val valueL = l.toString.substring(l.toString.indexOf("(") + 1, l.toString.indexOf(")"))
       val valueR = evaluate(m)(r)
-      if (m.contains(valueL)) {
-        m(valueL) = valueR.get
-        valueR
-      } else {
-        m += (valueL -> valueR.get)
-        valueR
+      valueR match {
+        case Failure(thrown) => {
+          Failure(new NoSuchFieldException(r))
+        }
+        case s => {
+          if (m.contains(valueL)) {
+            m(valueL) = s.get
+            println("s: " + s)
+            println("s.get: " + s.get)
+            s
+
+          } else {
+            m += (valueL -> s.get)
+            println("s: " + s)
+            println("s.get: " + s.get)
+            s
+          }
+
+        }
       }
+      // if (m.contains(valueL)) {
+      //   m(valueL) = valueR.get
+      //   println("valueR: " + valueR)
+      //   println("valueR.get: " + valueR.get)
+      //   valueR
+
+      // } else {
+      //   m += (valueL -> valueR.get)
+      //   println("valueR: " + valueR)
+      //   println("valueR.get: " + valueR.get)
+      //   valueR
+      // }
     }
     case Block(s @ _*) => {
       val i = s.iterator
