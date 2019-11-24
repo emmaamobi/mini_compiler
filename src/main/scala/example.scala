@@ -1,6 +1,6 @@
 import edu.luc.cs.laufer.cs473.expressions.CombinatorParser
 
-object example extends App {
+object example {
   val res = CombinatorParser.parseAll(
     CombinatorParser.block,
     """
