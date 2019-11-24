@@ -22,7 +22,6 @@ object CombinatorCalculator extends App {
       import behaviors._
       val expr = result.get
       println("The parsed expression is: ")
-      // println(expr)
       println(toFormattedString(expr))
       println("The pretty form is:")
       println(toPrettyFormatABC(expr))
@@ -50,10 +49,5 @@ object CombinatorCalculator extends App {
       }
 
     }
-
-    // scala.io.Source.stdin.getLines foreach { line =>
-    //   processExpr(line)
-    //   print("Enter infix expression: ")
-    // }
   }
 }
