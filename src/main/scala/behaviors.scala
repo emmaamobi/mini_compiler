@@ -88,13 +88,13 @@ object behaviors {
 
     case Conditional(e, l, r) => {
       val valueRstr = r.toString.substring(r.toString.indexOf("(") + 1, r.toString.indexOf(")"))
-      val valueR = evaluate(m)(l)
+      val valueR = evaluate(m)(e)
       valueR match {
         case Failure(thrown) => {
-          Failure(new NoSuchFieldException(valueRstr))
+          evaluate(m)(r)
         }
         case s => {
-          evaluate(m)(r)
+          evaluate(m)(l)
         }
       }
 
