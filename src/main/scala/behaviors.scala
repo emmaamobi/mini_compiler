@@ -53,14 +53,9 @@ object behaviors {
         case s => {
           if (m.contains(valueL)) {
             m(valueL) = s.get
-            println("s: " + s)
-            println("s.get: " + s.get)
             s
-
           } else {
             m += (valueL -> s.get)
-            println("s: " + s)
-            println("s.get: " + s.get)
             s
           }
 
