@@ -50,16 +50,12 @@ object behaviors {
       evaluate(m)(l)
     }
     case Assignment(l, r) => {
-      // println(l)
-      // println(l.toString())
-      // println(r)
-      // println(r.toString())
-      //Success(Num(0))
       val valueL = l.toString.substring(l.toString.indexOf("(") + 1, l.toString.indexOf(")"))
+      val valueRstr = r.toString.substring(r.toString.indexOf("(") + 1, r.toString.indexOf(")"))
       val valueR = evaluate(m)(r)
       valueR match {
         case Failure(thrown) => {
-          Failure(new NoSuchFieldException(r))
+          Failure(new NoSuchFieldException(valueRstr))
         }
         case s => {
           if (m.contains(valueL)) {
@@ -77,18 +73,6 @@ object behaviors {
 
         }
       }
-      // if (m.contains(valueL)) {
-      //   m(valueL) = valueR.get
-      //   println("valueR: " + valueR)
-      //   println("valueR.get: " + valueR.get)
-      //   valueR
-
-      // } else {
-      //   m += (valueL -> valueR.get)
-      //   println("valueR: " + valueR)
-      //   println("valueR.get: " + valueR.get)
-      //   valueR
-      // }
     }
     case Block(s @ _*) => {
       val i = s.iterator
