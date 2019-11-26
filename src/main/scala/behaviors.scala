@@ -67,6 +67,9 @@ object behaviors {
       val ans = evaluate(m)(e)
       ans match {
         case Failure(thrown) => {
+          ans
+        }
+        case Success(Num(0)) => {
           evaluate(m)(r)
         }
         case s => {
