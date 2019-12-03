@@ -27,14 +27,17 @@ object CombinatorParser extends JavaTokenParsers {
       }
     }
 
-  /** factor ::= wholeNumber | "+" factor | "-" factor | "(" expr ")" */
+  /** factor ::=ident { "." ident }* | number | "+" factor | "-" factor | "(" expr ")" | struct  */
   def factor: Parser[Expr] = (
-    wholeNumber ^^ { case s => Constant(s.toInt) }
+    ident ~ rep("." ~ ident) ^^ {case i ~ v => ??? //TODO FINISH THIS
+    }
+    |wholeNumber ^^ { case s => Constant(s.toInt) }
     | "+" ~> factor ^^ { case e => e }
     | "-" ~> factor ^^ { case e => UMinus(e) }
     // | "(" ~ expr ~ ")" ^^ { case _ ~ e ~ _ => e }
     | "(" ~> expr <~ ")"
     | ident ^^ { case s => Var(s) }
+    | struct
   )
 
   //statement   ::= expression ";" | assignment | conditional | loop | block
