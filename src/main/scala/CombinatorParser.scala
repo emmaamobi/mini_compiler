@@ -62,4 +62,11 @@ object CombinatorParser extends JavaTokenParsers {
       case "if" ~ _ ~ e ~ _ ~ l ~ Some("else" ~ r) => Conditional(e, l, r)
     }
 
+  //TODO struct ::= "{" "}" | "{" field { "," field }* "}"
+
+
+
+
+  //TODO field  ::= ident ":" expr
+
 }
