@@ -29,9 +29,10 @@ object CombinatorParser extends JavaTokenParsers {
 
   /** factor ::=ident { "." ident }* | number | "+" factor | "-" factor | "(" expr ")" | struct  */
   def factor: Parser[Expr] = (
-    ident ~ rep("." ~ ident) ^^ {case i ~ v => ??? //TODO FINISH THIS
+    ident ~ rep("." ~ ident) ^^ {
+      case i ~ v => ??? //TODO FINISH THIS
     }
-    |wholeNumber ^^ { case s => Constant(s.toInt) }
+    | wholeNumber ^^ { case s => Constant(s.toInt) }
     | "+" ~> factor ^^ { case e => e }
     | "-" ~> factor ^^ { case e => UMinus(e) }
     // | "(" ~ expr ~ ")" ^^ { case _ ~ e ~ _ => e }
@@ -68,18 +69,18 @@ object CombinatorParser extends JavaTokenParsers {
   //TODO struct ::= "{" "}" | "{" field { "," field }* "}"
 
   def struct: Parser[Expr] = (
-    "{" ~ rep(field) ~ "}" ^^ {case _ ~ fields ~ _ => Block(fields)}
-  | "{" ~ field ~! rep("," ~ field) ~ "}" ^^ {
-      case _ ~ f ~ fields ~ _ => fields.foldLeft(f){
-        case (i , _ ~ f) => Struct(i, f)
+    "{" ~ rep(field) ~ "}" ^^ { case _ ~ fields ~ _ => Block(fields: _*) }
+    | "{" ~ field ~! rep("," ~ field) ~ "}" ^^ {
+      case _ ~ f ~ fields ~ _ => fields.foldLeft(f) {
+        case (i, _ ~ f) => Struct(i, f)
       }
     }
-    )
+  )
 
   //TODO field  ::= ident ":" expr
   def field: Parser[Expr] = (
     ident ~ ":" ~ expr ^^ {
-      case i ~ _ ~ e => Field(i,e)
+      case i ~ _ ~ e => Field(i, e)
     }
   )
 
