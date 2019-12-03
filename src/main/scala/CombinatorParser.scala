@@ -63,6 +63,8 @@ object CombinatorParser extends JavaTokenParsers {
     }
 
   def field: Parser[Expr] =
-    ident ~ ":" ~ expr
+    expr ~ ":" ~ expr ^^ {
+      case ???
+    }
 
 }
