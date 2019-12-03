@@ -64,9 +64,18 @@ object CombinatorParser extends JavaTokenParsers {
 
   //TODO struct ::= "{" "}" | "{" field { "," field }* "}"
 
-
-
+  def struct: Parser[Expr] = (
+    "{" ~ "}" ^^ {case _ ~ _ => Block()}
+  | "{" ~ field ~! rep("," ~ field) ~ "}" ^^ {
+      case _ ~ f ~ fields ~ _ => Struct(f, fields: _*)
+    }
+    )
 
   //TODO field  ::= ident ":" expr
+  def field: Parser[Expr] = (
+    ident ~ ":" ~ expr ^^ {
+      case i ~ _ ~ e => Field(i,e)
+    }
+  )
 
 }
