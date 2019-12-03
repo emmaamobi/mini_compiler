@@ -24,4 +24,4 @@ case class Conditional(condition: Expr, left: Expr, right: Expr) extends Trinary
 case class Assignment(left: Expr, right: Expr) extends Expr
 case class Block(statements: Expr*) extends Expr
 case class Field (ident: String, expr: Expr) extends Expr
-case class Struct (field: Expr, fields: List[String ~ Expr]*) extends Expr
+case class Struct (field: Expr, fields: Expr*) extends Expr
