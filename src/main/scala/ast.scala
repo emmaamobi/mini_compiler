@@ -3,7 +3,7 @@ package edu.luc.cs.laufer.cs473.expressions.ast
 /** An initial algebra of arithmetic expressions. */
 sealed trait Expr
 case class Constant(value: Int) extends Expr
-case class Var(value: String) extends Expr
+case class Var(value: String*) extends Expr
 abstract class UnaryExpr(expr: Expr) extends Expr { require { expr != null } }
 case class UMinus(expr: Expr) extends UnaryExpr(expr)
 abstract class BinaryExpr(left: Expr, right: Expr) extends Expr { require { (left != null) && (right != null) } }
@@ -25,3 +25,4 @@ case class Assignment(left: Expr, right: Expr) extends Expr
 case class Block(statements: Expr*) extends Expr
 case class Field(ident: String, expr: Expr) extends Expr
 case class Struct(fields: Expr*) extends Expr
+case class Select(vars: String*) extends Expr

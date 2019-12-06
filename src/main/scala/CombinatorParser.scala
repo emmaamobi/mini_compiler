@@ -29,8 +29,8 @@ object CombinatorParser extends JavaTokenParsers {
 
   /** factor ::=ident { "." ident }* | number | "+" factor | "-" factor | "(" expr ")" | struct  */
   def factor: Parser[Expr] = (
-    ident ~ rep("." ~ ident) ^^ {
-      case i ~ v => ??? //TODO FINISH THIS
+    rep1sep(ident, ".") ^^ {
+      case v => Select(v: _*)
     }
     | wholeNumber ^^ { case s => Constant(s.toInt) }
     | "+" ~> factor ^^ { case e => e }
@@ -47,7 +47,7 @@ object CombinatorParser extends JavaTokenParsers {
 
   //assignment  ::= ident "=" expression ";"
   def assignment: Parser[Expr] =
-    ident ~ "=" ~ expr ~ ";" ^^ { case i ~ _ ~ e ~ _ => Assignment(Var(i), e) }
+    rep1sep(ident, ".") ~ "=" ~ expr ~ ";" ^^ { case i ~ _ ~ e ~ _ => Assignment(Var(i: _*), e) }
 
   def loop: Parser[Expr] =
     "while" ~ "(" ~ expr ~ ")" ~ block ^^ {
@@ -69,9 +69,9 @@ object CombinatorParser extends JavaTokenParsers {
   //TODO struct ::= "{" "}" | "{" field { "," field }* "}"
 
   def struct: Parser[Expr] = (
-    "{" ~ "}" ^^ { case _  ~ _ => Struct() }
-    | "{"  ~! rep1sep(field , ",") ~ "}" ^^ {
-      case _  ~ fields ~ _ => Struct(fields: _*)
+    "{" ~ "}" ^^ { case _ ~ _ => Struct() }
+    | "{" ~! rep1sep(field, ",") ~ "}" ^^ {
+      case _ ~ fields ~ _ => Struct(fields: _*)
     }
   )
 
