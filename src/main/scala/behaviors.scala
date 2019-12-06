@@ -139,6 +139,9 @@ object behaviors {
     case Assignment(l, r)       => buildExprString(prefix, nodeString = "Assignment", toFormattedString(prefix + INDENT)(l), toFormattedString(prefix + INDENT)(r))
     case Block(b @ _*)          => buildBlockString(prefix, b)
     case Conditional(e, b1, b2) => buildTrinaryExprString(prefix, "Conditional", toFormattedString(prefix + INDENT)(e), toFormattedString(prefix + INDENT)(b1), toFormattedString(prefix + INDENT)(b2))
+    case Field(ident, expr)     => buildExprString(prefix, "Field", prefix + ident, toFormattedString(prefix + INDENT)(expr))
+    case Struct(s @ _*)         => buildBlockString(prefix, s)
+      //TODO select?
   }
   def toFormattedString(e: Expr): String = toFormattedString("")(e)
 
@@ -156,7 +159,10 @@ object behaviors {
     case Assignment(l, r)         => buildPrettyAssign(prefix, " = ", toPrettyFormatABC(prefix)(l), toPrettyFormatABC(prefix)(r))
     case Block(e @ _*)            => buildPrettyBlockString(prefix, e)
     case Conditional(con, b1, b2) => buildPrettyTrinary(prefix, toPrettyFormatABC(prefix)(con), toPrettyFormatABC(prefix)(b1), toPrettyFormatABC(prefix)(b2))
-
+    case Field(ident, expr)       => buildPrettyAssign(prefix, ": ", prefix + ident, toPrettyFormatABC(prefix)(expr))
+    case Struct(s @ _*)           => buildPrettyBlockString(prefix, s)
+      //TODO select?
+      // Also work on the spacing for struct and the indent so it looks nice
   }
   def toPrettyFormatABC(e: Expr): String = toPrettyFormatABC("")(e)
 
