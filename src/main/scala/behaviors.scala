@@ -141,7 +141,8 @@ object behaviors {
     case Conditional(e, b1, b2) => buildTrinaryExprString(prefix, "Conditional", toFormattedString(prefix + INDENT)(e), toFormattedString(prefix + INDENT)(b1), toFormattedString(prefix + INDENT)(b2))
     case Field(ident, expr)     => buildExprString(prefix, "Field", prefix + ident, toFormattedString(prefix + INDENT)(expr))
     case Struct(s @ _*)         => buildBlockString(prefix, s)
-      //TODO select?
+    case Select(s @ _*)         => buildSelectionString(prefix, s)
+    //TODO select?
   }
   def toFormattedString(e: Expr): String = toFormattedString("")(e)
 
@@ -161,8 +162,9 @@ object behaviors {
     case Conditional(con, b1, b2) => buildPrettyTrinary(prefix, toPrettyFormatABC(prefix)(con), toPrettyFormatABC(prefix)(b1), toPrettyFormatABC(prefix)(b2))
     case Field(ident, expr)       => buildPrettyAssign(prefix, ": ", prefix + ident, toPrettyFormatABC(prefix)(expr))
     case Struct(s @ _*)           => buildPrettyBlockString(prefix, s)
-      //TODO select?
-      // Also work on the spacing for struct and the indent so it looks nice
+    case Select(s @ _*)           => buildSelectionString(prefix, s)
+    //TODO select?
+    // Also work on the spacing for struct and the indent so it looks nice
   }
   def toPrettyFormatABC(e: Expr): String = toPrettyFormatABC("")(e)
 
@@ -209,6 +211,16 @@ object behaviors {
     val result = new StringBuilder(prefix)
     val strings: Seq[String] = nodeExprs.map(expr => toFormattedString(prefix)(expr))
     strings.foreach(string => result.append(string))
+    result.toString
+
+  }
+
+  def buildSelectionString(prefix: String, nodeString: Seq[String]) = {
+    val result = new StringBuilder(prefix)
+    //val strings: Seq[String] = nodeExprs.foreach(string => result.append(string) + ".")
+    nodeString.foreach(string => if (string == nodeString.last) { result.append(string) } else { result.append(string + ".") })
+    result.append(";")
+    result.append(EOL)
     result.toString
 
   }
