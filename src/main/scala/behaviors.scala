@@ -10,6 +10,7 @@ object behaviors {
   type Store = Instance
   sealed trait Value
   case class Num(value: Int) extends Value
+  case class Ins(instance: Instance) extends Value
   type Result = Try[Value]
 
   def evaluate(m: Store)(e: Expr): Result = e match { //TODO for 3b
@@ -77,6 +78,9 @@ object behaviors {
         }
       }
     }
+    case Field(ident, expr) => ???
+    case Struct(fields@_*)  => ???
+    case Select(vars@_*)    => ???
   }
   def evalUnary(m: Store)(v: Expr, sign: String): Result = {
     val v1 = evaluate(m)(v)
@@ -142,7 +146,6 @@ object behaviors {
     case Field(ident, expr)     => buildExprString(prefix, "Field", prefix + ident, toFormattedString(prefix + INDENT)(expr))
     case Struct(s @ _*)         => buildBlockString(prefix, s)
     case Select(s @ _*)         => buildSelectionString(prefix, s)
-    //TODO select?
   }
   def toFormattedString(e: Expr): String = toFormattedString("")(e)
 
@@ -163,8 +166,6 @@ object behaviors {
     case Field(ident, expr)       => buildPrettyAssign(prefix, ": ", prefix + ident, toPrettyFormatABC(prefix)(expr))
     case Struct(s @ _*)           => buildPrettyStructString(prefix, s)
     case Select(s @ _*)           => buildSelectionString(prefix, s)
-    //TODO select?
-    // Also work on the spacing for struct and the indent so it looks nice
   }
   def toPrettyFormatABC(e: Expr): String = toPrettyFormatABC("")(e)
 
