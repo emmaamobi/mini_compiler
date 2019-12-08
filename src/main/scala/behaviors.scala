@@ -161,7 +161,7 @@ object behaviors {
     case Block(e @ _*)            => buildPrettyBlockString(prefix, e)
     case Conditional(con, b1, b2) => buildPrettyTrinary(prefix, toPrettyFormatABC(prefix)(con), toPrettyFormatABC(prefix)(b1), toPrettyFormatABC(prefix)(b2))
     case Field(ident, expr)       => buildPrettyAssign(prefix, ": ", prefix + ident, toPrettyFormatABC(prefix)(expr))
-    case Struct(s @ _*)           => buildPrettyBlockString(prefix, s)
+    case Struct(s @ _*)           => buildPrettyStructString(prefix, s)
     case Select(s @ _*)           => buildSelectionString(prefix, s)
     //TODO select?
     // Also work on the spacing for struct and the indent so it looks nice
@@ -175,6 +175,16 @@ object behaviors {
     val strings = e.map(expr => toPrettyFormatABC(prefix)(expr))
     strings.foreach(strings => result.append(strings))
     result.append(EOL)
+    result.append("}")
+    result.toString
+  }
+  def buildPrettyStructString(prefix: String, e: Seq[Expr]) = {
+    val result = new StringBuilder(prefix)
+    result.append("{")
+    //result.append(EOL)
+    val strings = e.map(expr => toPrettyFormatABC(prefix)(expr))
+    strings.foreach(strings => result.append(strings))
+    //result.append(EOL)
     result.append("}")
     result.toString
   }
@@ -259,8 +269,12 @@ object behaviors {
     result.append(leftExpr)
     result.append(sign)
     result.append(rightExpr)
-    result.append(";")
-    result.append(EOL)
+    if (sign != ": ") {
+      result.append(";")
+      result.append(EOL)
+    } else if (sign == ": " & result.last.toString != "}") {
+      result.append(", ")
+    }
     result.toString
   }
 
