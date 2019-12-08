@@ -78,9 +78,32 @@ object behaviors {
         }
       }
     }
-    case Field(ident, expr) => ???
-    case Struct(fields@_*)  => ???
-    case Select(vars@_*)    => ???
+    case Field(ident, expr) => {
+      val valueRstr = expr.toString.substring(expr.toString.indexOf("(") + 1, expr.toString.indexOf(")"))
+      val valueR = evaluate(m)(expr)
+      valueR match {
+        case Failure(thrown) => {
+          Failure(new NoSuchFieldException(valueRstr))
+        }
+        case s => {
+          m += (ident -> s.get)
+          s
+        }
+      }
+    }
+    case Struct(fields @ _*) => {
+      val struct = HashMap.empty[String, Value]
+      val i = fields.iterator
+      var result: Value = null
+      while (i.hasNext) {
+        evaluate(struct)(i.next()) match {
+          case Success(r)     => result = r
+          case f @ Failure(_) => return f
+        }
+      }
+      Success(result)
+    }
+    case Select(vars @ _*) => ???
   }
   def evalUnary(m: Store)(v: Expr, sign: String): Result = {
     val v1 = evaluate(m)(v)
