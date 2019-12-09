@@ -6,10 +6,12 @@ import scala.util.{Failure, Success, Try}
 
 object behaviors {
 
-  type Instance = HashMap[String, Value]
-  type Store = Instance
+  type Store = HashMap[String, Value]
+  type Instance = Store
   sealed trait Value
   case class Num(value: Int) extends Value
+  case class Ins(instance: HashMap[String, Value]) extends Value
+  //type Value = Either[Int, Instance]
   type Result = Try[Value]
 
   def evaluate(m: Store)(e: Expr): Result = e match { //TODO for 3b
@@ -77,6 +79,44 @@ object behaviors {
         }
       }
     }
+    //    case Field(ident, expr) => {
+    //      println(ident)
+    //      val valueRstr = expr.toString.substring(expr.toString.indexOf("(") + 1, expr.toString.indexOf(")"))
+    //      val valueR = evaluate(m)(expr)
+    //      valueR match {
+    //        case Failure(thrown) => {
+    //          Failure(new NoSuchFieldException(valueRstr))
+    //        }
+    //        case s => {
+    //          if (m.contains(ident)) {
+    //            m(ident) = s.get
+    //            s
+    //          } else {
+    //            m += (ident -> s.get)
+    //            s
+    //          }
+    //        }
+    //      }
+    //    }
+    case Struct(fields @ _*) => {
+      Try(Ins(HashMap(fields.map { case (k, v) => (k, evaluate(m)(v).get) }: _*)))
+
+      //      val struct: Instance = HashMap.empty[String, Value]
+      //      val i = fields.iterator
+      //      var result: Value = null
+      //      while (i.hasNext) {
+      //        evaluate(struct)(i.next()) match {
+      //          case Success(r)     => result = r
+      //          case f @ Failure(_) => return f
+      //        }
+      //      }
+      //      Success(result)
+    }
+    case Select(vars @ _*) => Try {
+      val s = vars.foldLeft(m)((k, v) => k(v).asInstanceOf[Store])
+      s(vars.head)
+
+    }
   }
   def evalUnary(m: Store)(v: Expr, sign: String): Result = {
     val v1 = evaluate(m)(v)
@@ -139,6 +179,9 @@ object behaviors {
     case Assignment(l, r)       => buildExprString(prefix, nodeString = "Assignment", toFormattedString(prefix + INDENT)(l), toFormattedString(prefix + INDENT)(r))
     case Block(b @ _*)          => buildBlockString(prefix, b)
     case Conditional(e, b1, b2) => buildTrinaryExprString(prefix, "Conditional", toFormattedString(prefix + INDENT)(e), toFormattedString(prefix + INDENT)(b1), toFormattedString(prefix + INDENT)(b2))
+    //    case Field(ident, expr)     => buildExprString(prefix, "Field", prefix + ident, toFormattedString(prefix + INDENT)(expr))
+    case Struct(s @ _*)         => buildStructString(prefix, s)
+    case Select(s @ _*)         => buildSelectionString(prefix, s)
   }
   def toFormattedString(e: Expr): String = toFormattedString("")(e)
 
@@ -156,7 +199,9 @@ object behaviors {
     case Assignment(l, r)         => buildPrettyAssign(prefix, " = ", toPrettyFormatABC(prefix)(l), toPrettyFormatABC(prefix)(r))
     case Block(e @ _*)            => buildPrettyBlockString(prefix, e)
     case Conditional(con, b1, b2) => buildPrettyTrinary(prefix, toPrettyFormatABC(prefix)(con), toPrettyFormatABC(prefix)(b1), toPrettyFormatABC(prefix)(b2))
-
+    //    case Field(ident, expr)       => buildPrettyAssign(prefix, ": ", prefix + ident, toPrettyFormatABC(prefix)(expr))
+    case Struct(s @ _*)           => buildPrettyStructString(prefix, s)
+    case Select(s @ _*)           => buildSelectionString(prefix, s)
   }
   def toPrettyFormatABC(e: Expr): String = toPrettyFormatABC("")(e)
 
@@ -167,6 +212,16 @@ object behaviors {
     val strings = e.map(expr => toPrettyFormatABC(prefix)(expr))
     strings.foreach(strings => result.append(strings))
     result.append(EOL)
+    result.append("}")
+    result.toString
+  }
+  def buildPrettyStructString(prefix: String, e: Seq[(String, Expr)]) = {
+    val result = new StringBuilder(prefix)
+    result.append("{")
+    //result.append(EOL)
+    val strings = e.map { case (k, v) => (k + ": " + toPrettyFormatABC(prefix)(v)) }
+    strings.foreach(strings => result.append(strings))
+    //result.append(EOL)
     result.append("}")
     result.toString
   }
@@ -203,6 +258,22 @@ object behaviors {
     val result = new StringBuilder(prefix)
     val strings: Seq[String] = nodeExprs.map(expr => toFormattedString(prefix)(expr))
     strings.foreach(string => result.append(string))
+    result.toString
+  }
+  def buildStructString(prefix: String, nodeExprs: Seq[(String, Expr)]) = {
+    //      Try(Ins(HashMap(fields.map { case (k,v) =>  (k, evaluate(m)(v).get) }: _*)))
+    val result = new StringBuilder(prefix)
+    val strings: Seq[String] = nodeExprs.map { case (k, v) => (toFormattedString(prefix)(Var(k)) + ", " + toFormattedString(prefix)(v)) }
+    strings.foreach(string => result.append(string))
+    result.toString
+  }
+
+  def buildSelectionString(prefix: String, nodeString: Seq[String]) = {
+    val result = new StringBuilder(prefix)
+    //val strings: Seq[String] = nodeExprs.foreach(string => result.append(string) + ".")
+    nodeString.foreach(string => if (string == nodeString.last) { result.append(string) } else { result.append(string + ".") })
+    result.append(";")
+    result.append(EOL)
     result.toString
 
   }
@@ -241,8 +312,12 @@ object behaviors {
     result.append(leftExpr)
     result.append(sign)
     result.append(rightExpr)
-    result.append(";")
-    result.append(EOL)
+    if (sign != ": ") {
+      result.append(";")
+      result.append(EOL)
+    } else if (sign == ": " & result.last.toString != "}") {
+      result.append(", ")
+    }
     result.toString
   }
 

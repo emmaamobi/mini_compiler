@@ -27,14 +27,16 @@ object CombinatorParser extends JavaTokenParsers {
       }
     }
 
-  /** factor ::= wholeNumber | "+" factor | "-" factor | "(" expr ")" */
+  /** factor ::=ident { "." ident }* | number | "+" factor | "-" factor | "(" expr ")" | struct  */
   def factor: Parser[Expr] = (
-    wholeNumber ^^ { case s => Constant(s.toInt) }
+    rep1sep(ident, ".") ^^ { case v => Select(v: _*) }
+    | wholeNumber ^^ { case s => Constant(s.toInt) }
     | "+" ~> factor ^^ { case e => e }
     | "-" ~> factor ^^ { case e => UMinus(e) }
     // | "(" ~ expr ~ ")" ^^ { case _ ~ e ~ _ => e }
     | "(" ~> expr <~ ")"
     | ident ^^ { case s => Var(s) }
+    | struct
   )
 
   //statement   ::= expression ";" | assignment | conditional | loop | block
@@ -43,7 +45,7 @@ object CombinatorParser extends JavaTokenParsers {
 
   //assignment  ::= ident "=" expression ";"
   def assignment: Parser[Expr] =
-    ident ~ "=" ~ expr ~ ";" ^^ { case i ~ _ ~ e ~ _ => Assignment(Var(i), e) }
+    rep1sep(ident, ".") ~ "=" ~ expr ~ ";" ^^ { case i ~ _ ~ e ~ _ => Assignment(Var(i: _*), e) }
 
   def loop: Parser[Expr] =
     "while" ~ "(" ~ expr ~ ")" ~ block ^^ {
@@ -61,5 +63,19 @@ object CombinatorParser extends JavaTokenParsers {
       case "if" ~ _ ~ e ~ _ ~ l ~ None             => Conditional(e, l, Block())
       case "if" ~ _ ~ e ~ _ ~ l ~ Some("else" ~ r) => Conditional(e, l, r)
     }
+
+  //TODO struct ::= "{" "}" | "{" field { "," field }* "}"
+
+  def struct: Parser[Expr] = (
+    "{" ~ "}" ^^ { case _ ~ _ => Struct() }
+    | "{" ~! rep1sep(field, ",") ~ "}" ^^ {
+      case _ ~ fields ~ _ => Struct(fields: _*)
+    }
+  )
+
+  //TODO field  ::= ident ":" expr
+  def field: Parser[(String, Expr)] = (
+    ident ~ ":" ~ expr ^^ { case i ~ _ ~ e => (i, e) }
+  )
 
 }
