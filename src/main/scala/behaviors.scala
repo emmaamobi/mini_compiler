@@ -6,11 +6,12 @@ import scala.util.{Failure, Success, Try}
 
 object behaviors {
 
-  type Instance = HashMap[String, Value]
-  type Store = Instance
+  type Store = HashMap[String, Value]
+  type Instance = Store
   sealed trait Value
   case class Num(value: Int) extends Value
-  case class Ins(instance: Instance) extends Value
+  case class Ins(instance: HashMap[String, Value]) extends Value
+  //type Value = Either[Int, Instance]
   type Result = Try[Value]
 
   def evaluate(m: Store)(e: Expr): Result = e match { //TODO for 3b
@@ -79,6 +80,7 @@ object behaviors {
       }
     }
     case Field(ident, expr) => {
+      println(ident)
       val valueRstr = expr.toString.substring(expr.toString.indexOf("(") + 1, expr.toString.indexOf(")"))
       val valueR = evaluate(m)(expr)
       valueR match {
@@ -86,22 +88,28 @@ object behaviors {
           Failure(new NoSuchFieldException(valueRstr))
         }
         case s => {
-          m += (ident -> s.get)
-          s
+          if (m.contains(ident)) {
+            m(ident) = s.get
+            s
+          } else {
+            m += (ident -> s.get)
+            s
+          }
         }
       }
     }
     case Struct(fields @ _*) => {
-      val struct = HashMap.empty[String, Value]
-      val i = fields.iterator
-      var result: Value = null
-      while (i.hasNext) {
-        evaluate(struct)(i.next()) match {
-          case Success(r)     => result = r
-          case f @ Failure(_) => return f
-        }
-      }
-      Success(result)
+//      val struct: Instance = HashMap.empty[String, Value]
+//      val i = fields.iterator
+//      var result: Value = null
+//      while (i.hasNext) {
+//        evaluate(struct)(i.next()) match {
+//          case Success(r)     => result = r
+//          case f @ Failure(_) => return f
+//        }
+//      }
+//      Success(result)
+      Try(Ins(HashMap(fields.map {case (k) =>  ( evaluate(m)(k))}: _*)))
     }
     case Select(vars @ _*) => ???
   }
