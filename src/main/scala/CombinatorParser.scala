@@ -74,10 +74,8 @@ object CombinatorParser extends JavaTokenParsers {
   )
 
   //TODO field  ::= ident ":" expr
-  def field: Parser[Expr] = (
-    ident ~ ":" ~ expr ^^ {
-      case i ~ _ ~ e => Field(i, e)
-    }
+  def field: Parser[(String, Expr)] = (
+    ident ~ ":" ~ expr ^^ { case i ~ _ ~ e => (i, e) }
   )
 
 }
