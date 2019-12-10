@@ -18,6 +18,23 @@ class TestParsing extends FlatSpec {
     assert(result.toString.contains("Block(List(Assignment(Var(List(i)),Constant(1))))"))
   }
 
+  "A parser" should "evaluate multiple assignments" in {
+    var result = CombinatorParser.parseAll(CombinatorParser.topLevel, "i = 1; t = 2; x = 3;")
+    println(result.toString)
+    assert(result.toString.contains("List("))
+    assert(result.toString.contains("Assignment(Var(List(i)),Constant(1))"))
+    assert(result.toString.contains("Assignment(Var(List(t)),Constant(2))"))
+    assert(result.toString.contains("Assignment(Var(List(x)),Constant(3))"))
+  }
+
+  "A parser" should "evaluate an assignment to a var" in {
+    var result = CombinatorParser.parseAll(CombinatorParser.topLevel, "t = 2; x = t;")
+    println(result.toString)
+    assert(result.toString.contains("Select("))
+    assert(result.toString.contains("Assignment(Var(List(x))"))
+
+  }
+
   "A parser" should "not evaluate an assignment without a semicolon" in {
     var result = CombinatorParser.parseAll(CombinatorParser.topLevel, "i = 1")
     assert(result.toString.contains("failure: ';' expected but end of source found"))
