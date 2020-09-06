@@ -14,6 +14,27 @@ object behaviors {
   //type Value = Either[Int, Instance]
   type Result = Try[Value]
 
+  def cycloComplex(e: Expr): Int = e match { //TODO for research
+    case Constant(c)      => 0
+    case UMinus(r)        => 0
+    case Plus(l, r)       => 0
+    case Minus(l, r)      => 0
+    case Times(l, r)      => 0
+    case Div(l, r)        => 0
+    case Mod(l, r)        => 0
+    case Var(v)           => 0
+    case Loop(l, r)       => 1
+    case Assignment(l, r) => 0
+    case Block(s @ _*) => { //work on doing cyclo inside the block
+      val i = s.iterator
+      while (i.hasNext) {
+        cycloComplex(i.next())
+      }
+    }
+    case Conditional(e, l, r) => 1 //work on counting cyclo of if and other elifs or else
+
+  }
+
   def evaluate(m: Store)(e: Expr): Result = e match { //TODO for 3b
     case Constant(c) => Success(Num(c))
     case UMinus(r)   => evalUnary(m)(r, "-")
